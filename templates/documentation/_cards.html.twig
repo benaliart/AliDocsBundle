@@ -1,0 +1,65 @@
+{#
+	Cards of a folder content (documentation home or folder index)
+	groups : consecutive items of the same type (folders / pages), one row per group
+#}
+{% set max_links = 4 %}
+
+{% for group in groups %}
+	<div class="ali-docs-home ali-docs-home-{{ group.type }}">
+		{% for item in group.items %}
+
+			{# Folder : a card with its first pages, the title opens the folder index #}
+			{% if item.isDirectory() %}
+				{% set files = item.getAllFiles() %}
+				<section class="ali-docs-card ali-docs-card-dir">
+					<h2 class="ali-docs-card-title">
+						<a href="{{ path('ali_docs_show', { 'doc_key': doc_key, 'path': item.getUrl() }) }}">
+							<span class="ali-docs-card-icon"><i class="bi bi-folder2"></i></span>
+							<span>{{ item.getName() }}</span>
+							<i class="bi bi-arrow-right ali-docs-card-arrow"></i>
+						</a>
+					</h2>
+					{% if files is empty %}
+						<p class="ali-docs-muted small mb-0">{{ 'No pages yet.' | trans({}, 'ali_docs') }}</p>
+					{% else %}
+						<ul class="ali-docs-card-links">
+							{% for file in files | slice(0, max_links) %}
+								{{ include('@AliDocs/documentation/_home_link.html.twig', { file: file }) }}
+							{% endfor %}
+						</ul>
+						{% if files | length > max_links %}
+							<details class="ali-docs-more">
+								<summary>
+									…
+									{{ 'and %count% more pages' | trans({ '%count%': files | length - max_links }, 'ali_docs') }}
+								</summary>
+								<ul class="ali-docs-card-links">
+									{% for file in files | slice(max_links) %}
+										{{ include('@AliDocs/documentation/_home_link.html.twig', { file: file }) }}
+									{% endfor %}
+								</ul>
+							</details>
+						{% endif %}
+					{% endif %}
+				</section>
+
+			{# Page : a lighter card, fully clickable, with a short intro of its content #}
+			{% else %}
+				{% set intro = (intros | default({}))[item.getUrl()] ?? null %}
+				<a class="ali-docs-card ali-docs-card-file" href="{{ path('ali_docs_show', { 'doc_key': doc_key, 'path': item.getUrl() }) }}">
+					<span class="ali-docs-card-head">
+						<span class="ali-docs-card-icon"><i class="bi bi-file-earmark-text"></i></span>
+						<span class="ali-docs-card-file-title">{{ item.getName() }}</span>
+						<i class="bi bi-arrow-right ali-docs-card-arrow"></i>
+					</span>
+					{% if intro %}
+						<span class="ali-docs-card-file-intro">{{ intro }}</span>
+					{% endif %}
+				</a>
+			{% endif %}
+
+		{% endfor %}
+	</div>
+{% else %}
+	<p class="ali-docs-muted">{{ 'No pages yet.' | trans({}, 'ali_docs') }}</p>
+{% endfor %}

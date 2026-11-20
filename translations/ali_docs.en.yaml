@@ -1,0 +1,61 @@
+# AliDocsBundle - English (base language)
+# Keys are the English texts: override them in your app's translations/ali_docs.<locale>.yaml
+
+# Layout
+'Documentation': 'Documentation'
+'Toggle navigation': 'Toggle navigation'
+'Close': 'Close'
+'Welcome to AliDocsBundle!': 'Welcome to AliDocsBundle!'
+
+# Search
+'Search': 'Search'
+'Search for': 'Results for'
+'No results found.': 'No results found.'
+
+# Sidebar
+'Go to documentation': 'Go to documentation'
+
+# Page
+'Page options': 'Page options'
+'Edit': 'Edit'
+
+# Edit form
+'Page position': 'Page position'
+'Page name': 'Page name'
+'Page title': 'Page title'
+'Markdown content': 'Markdown content'
+'Save changes': 'Save changes'
+'Back to the view': 'Back to the view'
+
+# Flash messages
+'Content updated successfully!': 'Content updated successfully!'
+
+# Documentation home
+'No pages yet.': 'No pages yet.'
+'and %count% more pages': '{1} and 1 more page|]1,Inf[ and %count% more pages'
+
+# Previous / Next
+'Page navigation': 'Page navigation'
+'Previous': 'Previous'
+'Next': 'Next'
+
+# Breadcrumb
+'Breadcrumb': 'Breadcrumb'
+
+# Search results
+'%count% results': '{1} 1 result|]1,Inf[ %count% results'
+
+# Edit errors
+'A page with this name already exists.': 'A page with this name already exists.'
+
+# Header
+'Home': 'Home'
+
+# Error pages
+'Page not found': 'Page not found'
+'The page you are looking for does not exist or has been moved.': 'The page you are looking for does not exist or has been moved.'
+'Access denied': 'Access denied'
+'You are not allowed to see this page.': 'You are not allowed to see this page.'
+'An error occurred': 'An error occurred'
+'The page can not be displayed. Please try again later.': 'The page can not be displayed. Please try again later.'
+'Back to the documentation home': 'Back to the documentation home'

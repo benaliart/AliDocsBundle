@@ -1,0 +1,7 @@
+{% set url = path( 'ali_docs_show', { 'doc_key': doc_key, path : item.getUrl()}) %}
+{% set admin_url = path( 'ali_docs_admin_edit', { 'doc_key': doc_key, path : item.getUrl()}) %}
+{% set active = current_url == url or current_url == admin_url %}
+
+<a class="tree_element file_element ali-docs-nav-link {{ active ? 'active' }}" href="{{ url }}" data-turbo-frame="content" data-turbo-action="advance" data-admin-url="{{ admin_url }}" {% if active %}aria-current="page"{% endif %}>
+	{{- item.getName() -}}
+</a>

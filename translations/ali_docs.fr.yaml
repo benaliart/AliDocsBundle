@@ -1,0 +1,60 @@
+# AliDocsBundle - Français
+
+# Layout
+'Documentation': 'Documentation'
+'Toggle navigation': 'Afficher / masquer la navigation'
+'Close': 'Fermer'
+'Welcome to AliDocsBundle!': 'Bienvenue sur AliDocsBundle !'
+
+# Search
+'Search': 'Recherche'
+'Search for': 'Résultats de recherche pour'
+'No results found.': 'Aucun résultat.'
+
+# Sidebar
+'Go to documentation': 'Aller à la documentation'
+
+# Page
+'Page options': 'Options de la page'
+'Edit': 'Modifier'
+
+# Edit form
+'Page position': 'Position de la page'
+'Page name': 'Nom de la page'
+'Page title': 'Titre de la page'
+'Markdown content': 'Contenu Markdown'
+'Save changes': 'Enregistrer'
+'Back to the view': 'Retour à la page'
+
+# Flash messages
+'Content updated successfully!': 'Contenu mis à jour avec succès !'
+
+# Documentation home
+'No pages yet.': 'Aucune page pour le moment.'
+'and %count% more pages': '{1} et 1 autre page|]1,Inf[ et %count% autres pages'
+
+# Previous / Next
+'Page navigation': 'Navigation entre les pages'
+'Previous': 'Précédent'
+'Next': 'Suivant'
+
+# Breadcrumb
+'Breadcrumb': "Fil d'Ariane"
+
+# Search results
+'%count% results': '{1} 1 résultat|]1,Inf[ %count% résultats'
+
+# Edit errors
+'A page with this name already exists.': 'Une page portant ce nom existe déjà.'
+
+# Header
+'Home': 'Accueil'
+
+# Error pages
+'Page not found': 'Page introuvable'
+'The page you are looking for does not exist or has been moved.': "La page demandée n'existe pas ou a été déplacée."
+'Access denied': 'Accès refusé'
+'You are not allowed to see this page.': "Vous n'avez pas accès à cette page."
+'An error occurred': 'Une erreur est survenue'
+'The page can not be displayed. Please try again later.': 'La page ne peut pas être affichée. Veuillez réessayer plus tard.'
+'Back to the documentation home': "Retour à l'accueil de la documentation"

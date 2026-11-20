@@ -1,0 +1,5 @@
+# AliDocsBundle routes : one set of routes per documentation (see config/packages/ali_docs.yaml)
+ali_docs:
+    resource: .
+    type: ali_docs
+    # prefix: documentation

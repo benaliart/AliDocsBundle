@@ -1,0 +1,116 @@
+{#
+	Layout of the documentation pages : a complete HTML page, independent of the application.
+	To customize it, override it in the application : templates/bundles/AliDocsBundle/base.html.twig
+#}
+{% if app.request.attributes.get('_route') | default %}
+	{% set current_url = path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) %}
+{% endif %}
+<!DOCTYPE html>
+<html lang="{{ app.request.locale | default('en') }}">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>{% block title %}{{ 'Documentation' | trans({}, 'ali_docs') }}{% endblock %}</title>
+		{% if ali_docs.layout.favicon %}
+			<link rel="icon" href="{{ asset(ali_docs.layout.favicon) }}">
+		{% endif %}
+
+		{# data-turbo-track : going from the application pages to the documentation (and back) reloads the whole page #}
+		{% block stylesheets %}
+			<link rel="stylesheet" href="{{ asset('bundles/alidocs/css/bootstrap5.3.3.min.css') }}" data-turbo-track="reload">
+			<link rel="stylesheet" href="{{ asset('bundles/alidocs/css/boostrap-icons.min.css') }}" data-turbo-track="reload">
+			<link rel="stylesheet" href="{{ asset('bundles/alidocs/css/github-markdown-light.css') }}" data-turbo-track="reload">
+			<link rel="stylesheet" href="{{ asset('bundles/alidocs/css/ali_docs.css') }}" data-turbo-track="reload">
+			{% for css in ali_docs.layout.extra_css %}
+				<link rel="stylesheet" href="{{ asset(css) }}" data-turbo-track="reload">
+			{% endfor %}
+		{% endblock %}
+
+		{% block javascripts %}
+			<meta name="view-transition" content="same-origin">
+			<meta name="turbo-refresh-method" content="morph">
+			<script type="module" src="{{ asset('bundles/alidocs/js/turbo.es2017-esm.min.js') }}" data-turbo-track="reload"></script>
+			<script src="{{ asset('bundles/alidocs/js/bootstrap.bundle.5.3.3.min.js') }}" data-turbo-track="reload"></script>
+			<script src="{{ asset('bundles/alidocs/js/ali_docs.js') }}" data-turbo-track="reload"></script>
+			{% for js in ali_docs.layout.extra_js %}
+				<script src="{{ asset(js) }}" defer data-turbo-track="reload"></script>
+			{% endfor %}
+		{% endblock %}
+	</head>
+	<body>
+		{% block body %}
+			<div class="ali-docs">
+
+				{# Loading bar : displayed while the content frame is loading (turbo-frame[busy]) #}
+				<div class="ali-docs-loading-bar" aria-hidden="true"></div>
+
+				{% block navbar %}
+					<header class="ali-docs-header">
+						{# Mobile : open the sidebar #}
+						<button class="ali-docs-icon-btn d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#ali-docs-sidebar" aria-controls="ali-docs-sidebar" aria-label="{{ 'Toggle navigation' | trans({}, 'ali_docs') }}">
+							<i class="bi bi-list"></i>
+						</button>
+
+						<a class="ali-docs-brand" href="{{ path('ali_docs_index', {'doc_key' : doc_key}) }}">
+							<span class="ali-docs-brand-icon"><i class="bi bi-journal-text"></i></span>
+							<span class="ali-docs-brand-title">{{ doc_title }}</span>
+						</a>
+
+						<div class="ali-docs-header-end">
+							{# Search : here on large screens, in the sidebar panel on small screens #}
+							<div class="ali-docs-header-search d-none d-lg-block">
+								{{ include('@AliDocs/documentation/_search_form.html.twig', { input_id: 's' }) }}
+							</div>
+
+							{# Link back to the application (layout.home_url) #}
+							{% if ali_docs.layout.home_url %}
+								{% set home_label = ali_docs.layout.home_label ?: 'Home' | trans({}, 'ali_docs') %}
+								<a class="ali-docs-home-link" href="{{ ali_docs.layout.home_url }}" data-turbo="false" title="{{ home_label }}">
+									<i class="bi bi-house"></i>
+									<span class="ali-docs-home-label">{{ home_label }}</span>
+								</a>
+							{% endif %}
+						</div>
+					</header>
+				{% endblock navbar %}
+
+				{% block main %}
+					<main class="ali-docs-main">
+
+						{% block sidebar %}
+							{# Sidebar : fixed column on large screens, offcanvas panel on small screens #}
+							<aside id="ali-docs-sidebar" class="ali-docs-sidebar offcanvas-lg offcanvas-start" tabindex="-1" aria-label="{{ 'Documentation' | trans({}, 'ali_docs') }}">
+								<div class="offcanvas-header d-lg-none">
+									<span class="fw-semibold">{{ doc_title }}</span>
+									<button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#ali-docs-sidebar" aria-label="{{ 'Close' | trans({}, 'ali_docs') }}"></button>
+								</div>
+								{# Search : small screens only (in the header on large screens) #}
+								<div class="ali-docs-sidebar-search d-lg-none">
+									{{ include('@AliDocs/documentation/_search_form.html.twig', { input_id: 's-mobile' }) }}
+								</div>
+								{{ render(controller('Aliarteo\\AliDocsBundle\\Controller\\DocumentationController::docTree', {
+									'doc_key' : doc_key,
+									'current_url' : current_url
+								})) }}
+							</aside>
+						{% endblock sidebar %}
+
+						<div class="ali-docs-content">
+							{# data-turbo-action : every navigation inside the frame updates the url (and the sidebar) #}
+							<turbo-frame id="content" data-turbo-action="advance">
+								{# Same container on every page. container_class : extension point #}
+								<div class="ali-docs-container {% block container_class %}{% endblock %}">
+									{% block content %}{% endblock content %}
+								</div>
+							</turbo-frame>
+						</div>
+					</main>
+				{% endblock main %}
+
+				{% block messages %}
+					{% include "@AliDocs/default/_flash_messages.html.twig" %}
+				{% endblock messages %}
+			</div>
+		{% endblock body %}
+	</body>
+</html>

@@ -1,0 +1,7 @@
+{# Search form : in the header (large screens) and in the sidebar panel (small screens). input_id : unique id of the field #}
+<form action="{{ path('ali_docs_search', { 'doc_key': doc_key }) }}" class="ali-docs-search" role="search" method="GET">
+	<input id="{{ input_id }}" name="s" type="search" placeholder="{{ 'Search' | trans({}, 'ali_docs') }}" aria-label="{{ 'Search' | trans({}, 'ali_docs') }}" value="{{ searchTerm | default }}">
+	<button type="submit" class="ali-docs-search-submit" aria-label="{{ 'Search' | trans({}, 'ali_docs') }}">
+		<i class="bi bi-search"></i>
+	</button>
+</form>

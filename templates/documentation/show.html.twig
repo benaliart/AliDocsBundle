@@ -1,0 +1,58 @@
+{% extends '@AliDocs/base.html.twig' %}
+
+{% block title %}
+	{{ doc_file.name }} | {{ doc_title }}
+{% endblock %}
+
+{% block content %}
+
+	<div class="ali-docs-page-header">
+
+		{{ include('@AliDocs/documentation/_breadcrumb.html.twig', { folders: breadcrumb, current: doc_file.name }) }}
+
+		{% if is_granted(edit_security) %}
+			<div class="dropdown ms-auto">
+				<button type="button" class="ali-docs-icon-btn" data-bs-toggle="dropdown" aria-expanded="false" aria-label="{{ 'Page options' | trans({}, 'ali_docs') }}">
+					<i class="bi bi-three-dots"></i>
+				</button>
+				<ul class="dropdown-menu dropdown-menu-end shadow-sm">
+					<li>
+						<a class="dropdown-item" href="{{ path('ali_docs_admin_edit', { 'doc_key' : doc_key, 'path' : path })}}" data-turbo-frame="_top">
+							<i class="bi bi-pencil me-2"></i>
+							{{- 'Edit' | trans({}, 'ali_docs') -}}
+						</a>
+					</li>
+				</ul>
+			</div>
+		{% endif %}
+
+	</div>
+
+	<article class="markdown-body">{{ content|raw }}</article>
+
+	{% if prev_file or next_file %}
+		<nav class="ali-docs-pager" aria-label="{{ 'Page navigation' | trans({}, 'ali_docs') }}">
+			{% if prev_file %}
+				<a class="ali-docs-pager-link" href="{{ path('ali_docs_show', { 'doc_key': doc_key, 'path': prev_file.getUrl() }) }}" rel="prev">
+					<span class="ali-docs-pager-label">
+						<i class="bi bi-arrow-left"></i>
+						{{- 'Previous' | trans({}, 'ali_docs') -}}
+					</span>
+					<span class="ali-docs-pager-title">{{ prev_file.getName() }}</span>
+				</a>
+			{% else %}
+				<span></span>
+			{% endif %}
+			{% if next_file %}
+				<a class="ali-docs-pager-link ali-docs-pager-next" href="{{ path('ali_docs_show', { 'doc_key': doc_key, 'path': next_file.getUrl() }) }}" rel="next">
+					<span class="ali-docs-pager-label">
+						{{- 'Next' | trans({}, 'ali_docs') -}}
+						<i class="bi bi-arrow-right"></i>
+					</span>
+					<span class="ali-docs-pager-title">{{ next_file.getName() }}</span>
+				</a>
+			{% endif %}
+		</nav>
+	{% endif %}
+
+{% endblock %}

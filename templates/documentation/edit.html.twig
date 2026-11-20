@@ -1,0 +1,60 @@
+{% extends '@AliDocs/base.html.twig' %}
+
+
+{% block javascripts %}
+	{{ parent() }}
+	<meta name="turbo-visit-control" content="reload">
+	<script src="{{ asset('/bundles/alidocs/js/wysimark.1.0.0.index.cjs.js') }}"></script>
+{% endblock %}
+
+{% block title %}
+	{{ path }}
+{% endblock %}
+
+
+{% block content %}
+
+
+	{{ form_start(form, { 'attr' : {'id' : 'edit_form'}}) }}
+	<div class="row">
+		<div class="col-12 col-md-10 pb-5">
+
+			<div class="row">
+				<div class="col-3 pb-3">
+					{{ form_row(form.position) }}
+				</div>
+				<div class="col-4 pb-3">
+					{{ form_row(form.title) }}
+				</div>
+			</div>
+
+
+			{{ form_row(form.content) }}
+			<div id="editor-container"></div>
+
+		</div>
+		<div class="col-2 ">
+			<div class="sticky-top">
+				<button type="submit" class="btn btn-primary mt-3">{{ 'Save changes' | trans({}, 'ali_docs') }}</button>
+				<a href="{{ path('ali_docs_show', { 'doc_key' : doc_key, 'path' : path })}}" class="btn btn-secondary mt-3" data-turbo-action="replace" data-turbo-frame="content" data-turbo-stream="menu">{{ 'Back to the view' | trans({}, 'ali_docs') }}</a>
+			</div>
+		</div>
+
+
+	</div>
+	{{ form_end(form) }}
+
+
+	<script>
+		const container = document.getElementById("editor-container")
+const textarea = document.getElementById("markdown_editor_content")
+// createWysimark is available on window now
+const wysimark = createWysimark(container, {
+initialMarkdown: textarea.value,
+onChange: (markdown) => {
+textarea.value = markdown
+}
+})
+	</script>
+
+{% endblock %}

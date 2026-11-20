@@ -1,0 +1,11 @@
+{# Custom markdown block : :::tip / :::warning / :::info / :::other ... ::: #}
+{% set icons = {
+	'tip': 'bi-lightbulb',
+	'warning': 'bi-exclamation-triangle',
+	'info': 'bi-info-circle',
+	'danger': 'bi-x-octagon',
+} %}
+<div class="ali-docs-callout ali-docs-callout-{{ type }}">
+	<i class="bi {{ icons[type] ?? 'bi-pin-angle' }} ali-docs-callout-icon"></i>
+	<div class="ali-docs-callout-body">{{ texte|raw }}</div>
+</div>

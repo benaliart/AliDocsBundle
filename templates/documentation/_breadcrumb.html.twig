@@ -1,0 +1,22 @@
+{#
+	Breadcrumb : documentation home > folders (links to their index) > current page / folder
+	folders : [{ name, path }], current : name of the current page / folder
+#}
+<nav class="ali-docs-breadcrumb" aria-label="{{ 'Breadcrumb' | trans({}, 'ali_docs') }}">
+	<ol class="breadcrumb">
+		<li class="breadcrumb-item">
+			<a href="{{ path('ali_docs_index', { 'doc_key': doc_key }) }}" title="{{ doc_title }}">
+				<i class="bi bi-house-door-fill"></i>
+				<span class="visually-hidden">{{ doc_title }}</span>
+			</a>
+		</li>
+		{% for folder in folders %}
+			<li class="breadcrumb-item">
+				<a href="{{ path('ali_docs_show', { 'doc_key': doc_key, 'path': folder.path }) }}">{{ folder.name }}</a>
+			</li>
+		{% endfor %}
+		<li class="breadcrumb-item active" aria-current="page">
+			<span class="ali-docs-breadcrumb-current">{{ current }}</span>
+		</li>
+	</ol>
+</nav>

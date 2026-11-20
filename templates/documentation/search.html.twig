@@ -1,0 +1,50 @@
+{% extends '@AliDocs/base.html.twig' %}
+
+{% block title %}
+	{{ 'Search' | trans({}, 'ali_docs') }}
+{% endblock %}
+
+{% block content %}
+
+	<h1 class="ali-docs-title mb-1">{{ 'Search for' | trans({},'ali_docs') }} « {{ searchTerm | default }} »</h1>
+
+	{% if results is not empty %}
+		<p class="ali-docs-muted mb-4">{{ '%count% results' | trans({ '%count%': results | length }, 'ali_docs') }}</p>
+
+		<div class="ali-docs-search-results">
+			{% for result in results %}
+				<a class="ali-docs-search-result" href="{{ path('ali_docs_show', { 'doc_key': doc_key, 'path': result.path }) }}">
+
+					{# Breadcrumb : home > folders > page #}
+					<span class="ali-docs-breadcrumb">
+						<ol class="breadcrumb">
+							<li class="breadcrumb-item">
+								<i class="bi bi-house-door-fill"></i>
+							</li>
+							{% for folder in result.folders %}
+								<li class="breadcrumb-item">{{ folder.name }}</li>
+							{% endfor %}
+							<li class="breadcrumb-item active">
+								<span class="ali-docs-breadcrumb-current">{{ result.name }}</span>
+							</li>
+						</ol>
+					</span>
+
+					{# Excerpt around the term found #}
+					{% if result.excerpt %}
+						<span class="ali-docs-search-excerpt">
+							{%- if result.excerpt.cut_start %}… {% endif -%}
+							{{- result.excerpt.before -}}
+							{%- if result.excerpt.match %}<mark>{{ result.excerpt.match }}</mark>{% endif -%}
+							{{- result.excerpt.after -}}
+							{%- if result.excerpt.cut_end %} …{% endif -%}
+						</span>
+					{% endif %}
+				</a>
+			{% endfor %}
+		</div>
+	{% else %}
+		<p class="ali-docs-muted mt-3">{{ 'No results found.' | trans({}, 'ali_docs') }}</p>
+	{% endif %}
+
+{% endblock %}

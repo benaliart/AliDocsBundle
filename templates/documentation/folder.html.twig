@@ -1,0 +1,18 @@
+{% extends '@AliDocs/base.html.twig' %}
+
+{% block title %}
+	{{ folder.getName() }} | {{ doc_title }}
+{% endblock %}
+
+
+{% block content %}
+
+	<div class="ali-docs-page-header">
+		{{ include('@AliDocs/documentation/_breadcrumb.html.twig', { folders: breadcrumb, current: folder.getName() }) }}
+	</div>
+
+	<h1 class="ali-docs-title">{{ folder.getName() }}</h1>
+
+	{{ include('@AliDocs/documentation/_cards.html.twig') }}
+
+{% endblock content %}

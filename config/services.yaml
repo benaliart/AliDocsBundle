@@ -1,0 +1,42 @@
+# AliDocsBundle services
+services:
+    _defaults:
+        autowire: true # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    Aliarteo\AliDocsBundle\:
+        resource: "../src/"
+
+    Aliarteo\AliDocsBundle\Controller\:
+        resource: "../src/Controller/*"
+        # Controllers must be public
+        public: true
+
+    #-------------------------------
+    # COMMANDS ---------------------
+    #-------------------------------
+    Aliarteo\AliDocsBundle\Command\InstallCommand:
+        arguments:
+            $projectDir: '%kernel.project_dir%'
+
+    #-------------------------------
+    # SERVICES ---------------------
+    #-------------------------------
+    Aliarteo\AliDocsBundle\Markdown\MarkdownParser:
+        arguments:
+            $twig: '@twig'
+            $urlGenerator: '@router'
+
+    Aliarteo\AliDocsBundle\Twig\AliDocsExtension:
+        arguments:
+            $layout: '%ali_docs.layout%'
+
+    #-------------------------------
+    # ROUTING ----------------------
+    #-------------------------------
+    Aliarteo\AliDocsBundle\Routing\AliDocsRoutingLoader:
+        arguments:
+            $admin_path: '%ali_docs.admin_path%'
+            $documentations: '%ali_docs.documentations%'
+        tags:
+            - { name: 'routing.loader' }

@@ -1,0 +1,3 @@
+# AliDocsBundle - Validation messages - English (base language)
+'The page name can only contain letters, numbers, spaces, underscores or dashes.': 'The page name can only contain letters, numbers, spaces, underscores or dashes.'
+'The content is too long (max {{ limit }} characters).': 'The content is too long (max {{ limit }} characters).'

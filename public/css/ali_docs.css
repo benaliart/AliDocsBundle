@@ -1,0 +1,1124 @@
+/* ==========================================================================
+   AliDocsBundle
+   All the styles are scoped to the .ali-docs wrapper.
+   Customize the look by overriding the variables below in your application :
+   .ali-docs { --ali-docs-accent: #7647f7; --ali-docs-accent-soft: #f1ecfe; }
+   ========================================================================== */
+
+.ali-docs {
+    --ali-docs-accent: #4f46e5;
+    --ali-docs-accent-soft: #eef0fe;
+    --ali-docs-text: #1f2328;
+    --ali-docs-muted: #6b7280;
+    --ali-docs-border: #e7e8ec;
+    --ali-docs-surface: #f7f8fa;
+    --ali-docs-hover: #f1f2f5;
+    --ali-docs-radius: 12px;
+    --ali-docs-radius-sm: 8px;
+    --ali-docs-header-height: 60px;
+    --ali-docs-transition: .25s ease;
+    --ali-docs-sidebar-width: 280px;
+    --ali-docs-font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background-color: #fff;
+    color: var(--ali-docs-text);
+    font-family: var(--ali-docs-font);
+}
+
+.ali-docs a,
+.ali-docs a:hover {
+    color: inherit;
+    text-decoration: none;
+}
+
+.ali-docs-muted {
+    color: var(--ali-docs-muted);
+}
+
+/* Icon button (mobile menu, page options) */
+.ali-docs-icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--ali-docs-radius-sm);
+    background: transparent;
+    color: var(--ali-docs-muted);
+    font-size: 1.25rem;
+    transition: background-color var(--ali-docs-transition), color var(--ali-docs-transition);
+}
+
+.ali-docs-icon-btn:hover,
+.ali-docs-icon-btn[aria-expanded="true"] {
+    background-color: var(--ali-docs-hover);
+    color: var(--ali-docs-text);
+}
+
+/* --------------------------------------------------------------------------
+   Header
+   -------------------------------------------------------------------------- */
+.ali-docs-header {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    flex-shrink: 0;
+    height: var(--ali-docs-header-height);
+    padding: 0 1.25rem;
+    border-bottom: 1px solid var(--ali-docs-border);
+    background-color: rgba(255, 255, 255, .9);
+    backdrop-filter: saturate(180%) blur(8px);
+    z-index: 1030;
+}
+
+.ali-docs-brand {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    min-width: 0;
+    font-weight: 600;
+    font-size: 1.05rem;
+    text-decoration: none;
+}
+
+.ali-docs-brand-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    border-radius: var(--ali-docs-radius-sm);
+    background-color: var(--ali-docs-accent);
+    color: #fff;
+    font-size: 1rem;
+}
+
+.ali-docs-brand-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Right part of the header : search (large screens) + link back to the application */
+.ali-docs-header-end {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    min-width: 0;
+    margin-left: auto;
+}
+
+.ali-docs-header-search {
+    width: 280px;
+}
+
+/* Search in the sidebar panel (small screens) */
+.ali-docs-sidebar-search {
+    padding: .75rem .75rem 0;
+}
+
+.ali-docs-search {
+    position: relative;
+    width: 100%;
+}
+
+/* Magnifier on the right : submit button of the search form */
+.ali-docs-search-submit {
+    position: absolute;
+    top: 50%;
+    right: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--ali-docs-muted);
+    font-size: .875rem;
+    transform: translateY(-50%);
+    cursor: pointer;
+    transition: background-color var(--ali-docs-transition), color var(--ali-docs-transition);
+}
+
+.ali-docs-search-submit:hover,
+.ali-docs-search-submit:focus-visible {
+    background-color: var(--ali-docs-accent);
+    color: #fff;
+    outline: none;
+}
+
+.ali-docs-search input:focus + .ali-docs-search-submit {
+    color: var(--ali-docs-accent);
+}
+
+.ali-docs-search input:focus + .ali-docs-search-submit:hover {
+    color: #fff;
+}
+
+.ali-docs-search input {
+    width: 100%;
+    height: 38px;
+    padding: 0 2.6rem 0 1rem;
+    border: 1px solid var(--ali-docs-border);
+    border-radius: 50rem;
+    background-color: var(--ali-docs-surface);
+    color: var(--ali-docs-text);
+    font-size: .9rem;
+    outline: none;
+    transition: border-color var(--ali-docs-transition), background-color var(--ali-docs-transition), box-shadow var(--ali-docs-transition);
+}
+
+.ali-docs-search input:focus {
+    border-color: var(--ali-docs-accent);
+    background-color: #fff;
+    box-shadow: 0 0 0 3px var(--ali-docs-accent-soft);
+}
+
+/* Link back to the application (layout.home_url) */
+.ali-docs-home-link {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    flex-shrink: 0;
+    padding: .45rem .75rem;
+    border-radius: var(--ali-docs-radius-sm);
+    color: var(--ali-docs-muted);
+    font-size: .9rem;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: background-color var(--ali-docs-transition), color var(--ali-docs-transition);
+}
+
+.ali-docs-home-link:hover {
+    background-color: var(--ali-docs-hover);
+    color: var(--ali-docs-text);
+}
+
+@media (max-width: 767.98px) {
+    .ali-docs-home-label {
+        display: none;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   Layout
+   -------------------------------------------------------------------------- */
+.ali-docs-main {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+}
+
+.ali-docs-content {
+    flex: 1;
+    min-width: 0;
+    overflow-y: auto;
+}
+
+.ali-docs-container {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 1.5rem 1rem 2rem;
+}
+
+@media (max-width: 575.98px) {
+    .ali-docs-container {
+        padding: 1rem 1rem 2rem;
+    }
+
+}
+
+/* Titles outside the markdown content : reset the heading styles of github-markdown / the application */
+.ali-docs-title,
+.ali-docs-card-title {
+    margin-top: 0;
+    padding: 0;
+    border-bottom: 0;
+}
+
+.ali-docs-title {
+    margin-bottom: 1.25rem;
+    font-size: 1.85rem;
+    font-weight: 700;
+    letter-spacing: -.02em;
+}
+
+/* --------------------------------------------------------------------------
+   Sidebar
+   -------------------------------------------------------------------------- */
+.ali-docs-sidebar {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--ali-docs-surface);
+}
+
+@media (min-width: 992px) {
+    .ali-docs-sidebar {
+        width: var(--ali-docs-sidebar-width);
+        flex-shrink: 0;
+        border-right: 1px solid var(--ali-docs-border);
+        overflow-y: auto;
+        /* .offcanvas-lg sets a transparent background on large screens */
+        background-color: var(--ali-docs-surface) !important;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .ali-docs-sidebar {
+        --bs-offcanvas-width: min(320px, 85vw);
+        overflow-y: auto;
+    }
+}
+
+.ali-docs-nav {
+    flex: 1;
+    padding: 1.25rem .75rem;
+}
+
+.ali-docs-nav-link {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: .4rem .75rem;
+    border-radius: var(--ali-docs-radius-sm);
+    color: var(--ali-docs-muted);
+    font-size: .925rem;
+    line-height: 1.4;
+    text-decoration: none;
+    transition: background-color var(--ali-docs-transition), color var(--ali-docs-transition);
+}
+
+.ali-docs-nav-link:hover {
+    background-color: var(--ali-docs-hover);
+    color: var(--ali-docs-text);
+}
+
+.ali-docs-nav-link.active {
+    background-color: var(--ali-docs-accent-soft);
+    color: var(--ali-docs-accent);
+    font-weight: 600;
+}
+
+/* Folder row : name (link to the folder index) + chevron (show / hide) */
+.ali-docs-nav-folder-row {
+    display: flex;
+    align-items: center;
+    margin-top: .15rem;
+    border-radius: var(--ali-docs-radius-sm);
+    transition: background-color var(--ali-docs-transition);
+}
+
+.ali-docs-nav-folder-row:hover {
+    background-color: var(--ali-docs-hover);
+}
+
+.ali-docs-nav-folder-link {
+    flex: 1;
+    min-width: 0;
+    padding: .4rem .25rem .4rem .75rem;
+    color: var(--ali-docs-text);
+    font-size: .925rem;
+    font-weight: 600;
+    line-height: 1.4;
+    text-decoration: none;
+    transition: color var(--ali-docs-transition);
+}
+
+.dir_element.active .ali-docs-nav-folder-link {
+    color: var(--ali-docs-accent);
+}
+
+/* Folder index displayed */
+.ali-docs-nav-folder-row.current {
+    background-color: var(--ali-docs-accent-soft);
+}
+
+.ali-docs-nav-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 30px;
+    height: 30px;
+    margin-right: .2rem;
+    padding: 0;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    transition: background-color var(--ali-docs-transition);
+}
+
+.ali-docs-nav-toggle:hover {
+    background-color: rgba(15, 23, 42, .06);
+}
+
+.ali-docs-chevron {
+    font-size: .7rem;
+    color: var(--ali-docs-muted);
+    transition: transform var(--ali-docs-transition);
+}
+
+.ali-docs-nav-toggle:not(.collapsed) .ali-docs-chevron {
+    transform: rotate(90deg);
+}
+
+.ali-docs-nav-children {
+    margin: .15rem 0 .35rem .85rem;
+    padding-left: .5rem;
+    border-left: 1px solid var(--ali-docs-border);
+}
+
+.ali-docs-sidebar-footer {
+    position: sticky;
+    bottom: 0;
+    padding: .75rem;
+    border-top: 1px solid var(--ali-docs-border);
+    background-color: var(--ali-docs-surface);
+}
+
+.ali-docs-switch {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    width: 100%;
+    padding: .5rem .75rem;
+    border: 1px solid var(--ali-docs-border);
+    border-radius: var(--ali-docs-radius-sm);
+    background-color: #fff;
+    color: var(--ali-docs-text);
+    font-size: .875rem;
+    font-weight: 500;
+    transition: background-color var(--ali-docs-transition), border-color var(--ali-docs-transition);
+}
+
+.ali-docs-switch:hover {
+    border-color: #d5d7dd;
+    background-color: var(--ali-docs-hover);
+}
+
+.ali-docs-switch::after {
+    margin-left: auto;
+}
+
+/* --------------------------------------------------------------------------
+   Dropdowns (page options, documentation switch)
+   -------------------------------------------------------------------------- */
+.ali-docs .dropdown-menu {
+    --bs-dropdown-padding-y: .35rem;
+    --bs-dropdown-padding-x: .35rem;
+    --bs-dropdown-spacer: .35rem;
+    --bs-dropdown-min-width: 11rem;
+    --bs-dropdown-font-size: .9rem;
+    --bs-dropdown-border-color: var(--ali-docs-border);
+    --bs-dropdown-border-radius: var(--ali-docs-radius);
+    --bs-dropdown-item-padding-x: .75rem;
+    --bs-dropdown-item-padding-y: .45rem;
+    --bs-dropdown-item-border-radius: var(--ali-docs-radius-sm);
+    --bs-dropdown-link-color: var(--ali-docs-text);
+    --bs-dropdown-link-hover-color: var(--ali-docs-accent);
+    --bs-dropdown-link-hover-bg: var(--ali-docs-accent-soft);
+    --bs-dropdown-link-active-color: var(--ali-docs-accent);
+    --bs-dropdown-link-active-bg: var(--ali-docs-accent-soft);
+    padding: var(--bs-dropdown-padding-y) var(--bs-dropdown-padding-x);
+    border: 1px solid var(--ali-docs-border);
+    border-radius: var(--ali-docs-radius);
+    box-shadow: 0 10px 30px rgba(15, 23, 42, .1) !important;
+}
+
+/* Remove the list spacing added by the application / markdown styles */
+.ali-docs .dropdown-menu li {
+    margin: 0;
+}
+
+.ali-docs .dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    border-radius: var(--ali-docs-radius-sm);
+    font-weight: 500;
+    transition: background-color var(--ali-docs-transition), color var(--ali-docs-transition);
+}
+
+.ali-docs .dropdown-item i {
+    margin: 0 !important;
+    color: var(--ali-docs-muted);
+    transition: color var(--ali-docs-transition);
+}
+
+.ali-docs .dropdown-item:hover i,
+.ali-docs .dropdown-item:focus i {
+    color: var(--ali-docs-accent);
+}
+
+.ali-docs .dropdown-divider {
+    margin: .3rem -.35rem;
+    border-color: var(--ali-docs-border);
+}
+
+/* --------------------------------------------------------------------------
+   Page header : breadcrumb + options
+   -------------------------------------------------------------------------- */
+.ali-docs-page-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: .5rem;
+}
+
+.ali-docs-breadcrumb {
+    --bs-breadcrumb-divider: '›';
+    --bs-breadcrumb-item-padding-x: .6rem;
+    --bs-breadcrumb-divider-color: #b8bcc4;
+    --bs-breadcrumb-item-active-color: var(--ali-docs-accent);
+    --bs-breadcrumb-margin-bottom: 0;
+    font-size: .925rem;
+}
+
+.ali-docs-breadcrumb .breadcrumb {
+    flex-wrap: wrap;
+    align-items: center;
+    row-gap: .25rem;
+}
+
+.ali-docs-breadcrumb .breadcrumb-item {
+    display: flex;
+    align-items: center;
+    color: var(--ali-docs-muted);
+}
+
+.ali-docs-breadcrumb .breadcrumb-item + .breadcrumb-item::before {
+    font-size: 1.15rem;
+    line-height: 1;
+}
+
+.ali-docs-breadcrumb a {
+    color: var(--ali-docs-muted);
+    text-decoration: none;
+    transition: color var(--ali-docs-transition);
+}
+
+.ali-docs-breadcrumb a:hover {
+    color: var(--ali-docs-text);
+}
+
+.ali-docs-breadcrumb-current {
+    padding: .25rem .75rem;
+    border-radius: 50rem;
+    background-color: var(--ali-docs-accent-soft);
+    color: var(--ali-docs-accent);
+    font-weight: 500;
+}
+
+/* --------------------------------------------------------------------------
+   Markdown content (overrides github-markdown-light.css)
+   -------------------------------------------------------------------------- */
+.ali-docs .markdown-body {
+    color: var(--ali-docs-text);
+    font-family: var(--ali-docs-font);
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.ali-docs .markdown-body p,
+.ali-docs .markdown-body ul,
+.ali-docs .markdown-body ol,
+.ali-docs .markdown-body table,
+.ali-docs .markdown-body pre,
+.ali-docs .markdown-body blockquote {
+    margin-bottom: .75rem;
+}
+
+.ali-docs .markdown-body h1,
+.ali-docs .markdown-body h2,
+.ali-docs .markdown-body h3,
+.ali-docs .markdown-body h4 {
+    border-bottom: 0;
+    padding-bottom: 0;
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: -.01em;
+}
+
+.ali-docs .markdown-body h1 {
+    margin: 0 0 .85rem;
+    font-size: 1.95rem;
+    letter-spacing: -.025em;
+}
+
+.ali-docs .markdown-body h2 {
+    margin: 1.75rem 0 .6rem;
+    font-size: 1.4rem;
+}
+
+.ali-docs .markdown-body h3 {
+    margin: 1.4rem 0 .5rem;
+    font-size: 1.125rem;
+}
+
+.ali-docs .markdown-body h4 {
+    margin: 1.2rem 0 .4rem;
+}
+
+.ali-docs .markdown-body a {
+    color: var(--ali-docs-accent);
+    font-weight: 500;
+    text-decoration: none;
+    transition: color var(--ali-docs-transition);
+}
+
+.ali-docs .markdown-body a:hover {
+    color: color-mix(in srgb, var(--ali-docs-accent) 75%, #000);
+    text-decoration: none;
+}
+
+.ali-docs .markdown-body img,
+.ali-docs .markdown-body video {
+    max-width: 100%;
+    border: 1px solid var(--ali-docs-border);
+    border-radius: var(--ali-docs-radius);
+    background-color: transparent;
+}
+
+.ali-docs .markdown-body code {
+    padding: .15em .4em;
+    border-radius: 6px;
+    background-color: var(--ali-docs-hover);
+    font-size: .875em;
+}
+
+.ali-docs .markdown-body pre {
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--ali-docs-border);
+    border-radius: var(--ali-docs-radius);
+    background-color: var(--ali-docs-surface);
+    font-size: .875rem;
+    line-height: 1.6;
+}
+
+.ali-docs .markdown-body pre code {
+    padding: 0;
+    background: transparent;
+}
+
+.ali-docs .markdown-body blockquote {
+    padding: .25rem 1rem;
+    border-left: 3px solid var(--ali-docs-accent);
+    color: var(--ali-docs-muted);
+}
+
+.ali-docs .markdown-body table {
+    display: table;
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .925rem;
+}
+
+.ali-docs .markdown-body table th,
+.ali-docs .markdown-body table td {
+    padding: .6rem .9rem;
+    border: 0;
+    border-bottom: 1px solid var(--ali-docs-border);
+}
+
+.ali-docs .markdown-body table tr {
+    border-top: 0;
+    background-color: transparent;
+}
+
+.ali-docs .markdown-body table th {
+    background-color: var(--ali-docs-surface);
+    font-weight: 600;
+    text-align: left;
+}
+
+.ali-docs .markdown-body hr {
+    height: 1px;
+    margin: 1.75rem 0;
+    background-color: var(--ali-docs-border);
+}
+
+/* Custom blocks : :::tip / :::warning / :::info / :::danger */
+.ali-docs-callout {
+    --ali-docs-callout-color: #6b7280;
+    --ali-docs-callout-bg: #f7f8fa;
+    display: flex;
+    gap: .75rem;
+    margin: 1rem 0;
+    padding: .85rem 1rem;
+    border: 1px solid color-mix(in srgb, var(--ali-docs-callout-color) 22%, transparent);
+    border-radius: var(--ali-docs-radius);
+    background-color: var(--ali-docs-callout-bg);
+}
+
+.ali-docs-callout-icon {
+    flex-shrink: 0;
+    color: var(--ali-docs-callout-color);
+    font-size: 1.15rem;
+    line-height: 1.6;
+}
+
+.ali-docs-callout-body > :last-child {
+    margin-bottom: 0;
+}
+
+.ali-docs-callout-tip {
+    --ali-docs-callout-color: #157347;
+    --ali-docs-callout-bg: #eef7f2;
+}
+
+.ali-docs-callout-info {
+    --ali-docs-callout-color: #0b62d6;
+    --ali-docs-callout-bg: #eef4fd;
+}
+
+.ali-docs-callout-warning {
+    --ali-docs-callout-color: #b26a00;
+    --ali-docs-callout-bg: #fff7e8;
+}
+
+.ali-docs-callout-danger {
+    --ali-docs-callout-color: #c62828;
+    --ali-docs-callout-bg: #fdeeee;
+}
+
+/* --------------------------------------------------------------------------
+   Previous / Next
+   -------------------------------------------------------------------------- */
+.ali-docs-pager {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--ali-docs-border);
+}
+
+.ali-docs-pager-link {
+    display: flex;
+    flex-direction: column;
+    gap: .2rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--ali-docs-border);
+    border-radius: var(--ali-docs-radius);
+    text-decoration: none;
+    transition: border-color var(--ali-docs-transition), box-shadow var(--ali-docs-transition);
+}
+
+.ali-docs-pager-link:hover {
+    border-color: var(--ali-docs-accent);
+    box-shadow: 0 4px 14px rgba(15, 23, 42, .06);
+}
+
+.ali-docs-pager-next {
+    grid-column: 2;
+    align-items: flex-end;
+    text-align: right;
+}
+
+.ali-docs-pager-label {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    color: var(--ali-docs-muted);
+    font-size: .8rem;
+}
+
+.ali-docs-pager-title {
+    color: var(--ali-docs-text);
+    font-weight: 600;
+    transition: color var(--ali-docs-transition);
+}
+
+.ali-docs-pager-link:hover .ali-docs-pager-title {
+    color: var(--ali-docs-accent);
+}
+
+/* --------------------------------------------------------------------------
+   Documentation home
+   -------------------------------------------------------------------------- */
+/* One row per group of consecutive folders / pages */
+.ali-docs-home {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+@media (min-width: 992px) {
+    .ali-docs-home {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.ali-docs-card {
+    border: 1px solid var(--ali-docs-border);
+    border-radius: var(--ali-docs-radius);
+    background-color: #fff;
+    transition: border-color var(--ali-docs-transition), box-shadow var(--ali-docs-transition), background-color var(--ali-docs-transition);
+}
+
+.ali-docs-card-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    border-radius: var(--ali-docs-radius-sm);
+    background-color: var(--ali-docs-accent-soft);
+    color: var(--ali-docs-accent);
+    font-size: 1rem;
+}
+
+/* Folder card */
+.ali-docs-card-dir {
+    padding: 1.15rem 1.25rem .75rem;
+}
+
+.ali-docs-card-dir:hover {
+    box-shadow: 0 4px 14px rgba(15, 23, 42, .05);
+}
+
+.ali-docs-card-title {
+    margin-bottom: .6rem;
+    font-size: 1.05rem;
+    font-weight: 600;
+}
+
+/* Folder title : link to the folder index */
+.ali-docs-card-title a {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    text-decoration: none;
+    transition: color var(--ali-docs-transition);
+}
+
+.ali-docs-card-title a:hover {
+    color: var(--ali-docs-accent);
+}
+
+.ali-docs-card-title a:hover .ali-docs-card-arrow {
+    opacity: 1;
+    transform: none;
+    color: var(--ali-docs-accent);
+}
+
+.ali-docs-card-links {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.ali-docs-card-links a {
+    display: block;
+    margin: 0 -.5rem;
+    padding: .35rem .5rem;
+    border-radius: var(--ali-docs-radius-sm);
+    color: var(--ali-docs-muted);
+    font-size: .925rem;
+    text-decoration: none;
+    transition: background-color var(--ali-docs-transition), color var(--ali-docs-transition);
+}
+
+.ali-docs-card-links a:hover {
+    background-color: var(--ali-docs-hover);
+    color: var(--ali-docs-accent);
+}
+
+.ali-docs-more > summary {
+    margin: 0 -.5rem;
+    padding: .35rem .5rem;
+    border-radius: var(--ali-docs-radius-sm);
+    color: var(--ali-docs-accent);
+    font-size: .875rem;
+    font-weight: 500;
+    cursor: pointer;
+    list-style: none;
+    transition: background-color var(--ali-docs-transition);
+}
+
+.ali-docs-more > summary::-webkit-details-marker {
+    display: none;
+}
+
+.ali-docs-more > summary:hover {
+    background-color: var(--ali-docs-hover);
+}
+
+.ali-docs-more[open] > summary {
+    display: none;
+}
+
+/* Page card : fully clickable, header (icon + title) and short intro below */
+.ali-docs-card-file {
+    display: flex;
+    flex-direction: column;
+    gap: .6rem;
+    padding: 1.15rem 1.25rem;
+    text-decoration: none;
+}
+
+.ali-docs-card-file:hover {
+    border-color: color-mix(in srgb, var(--ali-docs-accent) 35%, var(--ali-docs-border));
+    box-shadow: 0 4px 14px rgba(15, 23, 42, .06);
+}
+
+.ali-docs-card-head {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    min-width: 0;
+}
+
+/* Page icon : neutral (folders use the accent color) */
+.ali-docs-card-file .ali-docs-card-icon {
+    background-color: var(--ali-docs-surface);
+    color: var(--ali-docs-muted);
+    transition: background-color var(--ali-docs-transition), color var(--ali-docs-transition);
+}
+
+.ali-docs-card-file:hover .ali-docs-card-icon {
+    background-color: var(--ali-docs-accent-soft);
+    color: var(--ali-docs-accent);
+}
+
+.ali-docs-card-file-title {
+    overflow: hidden;
+    font-size: 1.05rem;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: color var(--ali-docs-transition);
+}
+
+.ali-docs-card-file:hover .ali-docs-card-file-title {
+    color: var(--ali-docs-accent);
+}
+
+/* Short intro of the page : 3 lines max */
+.ali-docs-card-file-intro {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    color: var(--ali-docs-muted);
+    font-size: .875rem;
+    line-height: 1.55;
+}
+
+.ali-docs-card-arrow {
+    margin-left: auto;
+    color: var(--ali-docs-muted);
+    opacity: 0;
+    transform: translateX(-4px);
+    transition: opacity var(--ali-docs-transition), transform var(--ali-docs-transition);
+}
+
+.ali-docs-card-file:hover .ali-docs-card-arrow {
+    opacity: 1;
+    transform: none;
+    color: var(--ali-docs-accent);
+}
+
+/* --------------------------------------------------------------------------
+   Search results
+   -------------------------------------------------------------------------- */
+.ali-docs-search-results {
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+}
+
+.ali-docs-search-result {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--ali-docs-border);
+    border-radius: var(--ali-docs-radius);
+    text-decoration: none;
+    transition: border-color var(--ali-docs-transition), box-shadow var(--ali-docs-transition);
+}
+
+.ali-docs-search-result:hover {
+    border-color: var(--ali-docs-accent);
+    box-shadow: 0 4px 14px rgba(15, 23, 42, .06);
+}
+
+.ali-docs-search-excerpt {
+    color: var(--ali-docs-muted);
+    font-size: .9rem;
+    line-height: 1.6;
+}
+
+.ali-docs-search-excerpt mark {
+    /* box-shadow instead of padding : no fake space around the highlighted text */
+    padding: 0;
+    border-radius: 3px;
+    box-shadow: 0 0 0 2px var(--ali-docs-accent-soft);
+    background-color: var(--ali-docs-accent-soft);
+    color: var(--ali-docs-accent);
+    font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   Edit form
+   -------------------------------------------------------------------------- */
+.ali-docs .form-label {
+    font-weight: 600;
+}
+
+#markdown_editor_content {
+    display: none;
+}
+
+[data-item-type="button"] {
+    border: none !important;
+    height: initial !important;
+    padding-top: 0 !important;
+}
+
+.css-1gzrj0n {
+    border-radius: 0 !important;
+}
+
+/* --------------------------------------------------------------------------
+   Flash messages
+   -------------------------------------------------------------------------- */
+.ali-docs .messages {
+    position: fixed;
+    right: 1.5rem;
+    bottom: 1.5rem;
+    z-index: 10000;
+}
+
+.ali-docs .messages .alert {
+    border: 0;
+    border-radius: var(--ali-docs-radius);
+    box-shadow: 0 8px 24px rgba(15, 23, 42, .12);
+}
+
+.auto-hide {
+    animation: aliDocsHide 4s forwards;
+}
+
+@keyframes aliDocsHide {
+    0%, 80% {
+        opacity: 1;
+        height: auto;
+        width: auto;
+    }
+
+    100% {
+        opacity: 0;
+        height: 0;
+        width: 0;
+        overflow: hidden;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   Turbo
+   -------------------------------------------------------------------------- */
+/* Turbo progress bar (full page visits : search, other documentation...) */
+.turbo-progress-bar {
+    height: 3px;
+    background-color: #4f46e5;
+}
+
+/* Loading of the content frame (Turbo sets the "busy" attribute on the frame during the request) :
+   a top progress bar like the Turbo one + faded content. Delayed to avoid flickering on fast loads. */
+.ali-docs-loading-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 2147483647;
+    width: 0;
+    height: 3px;
+    background-color: var(--ali-docs-accent);
+    box-shadow: 0 0 8px color-mix(in srgb, var(--ali-docs-accent) 60%, transparent);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.ali-docs:has(turbo-frame#content[busy]) .ali-docs-loading-bar {
+    opacity: 1;
+    animation: aliDocsLoading 8s cubic-bezier(.08, .6, .3, 1) .15s forwards;
+}
+
+@keyframes aliDocsLoading {
+    0% {
+        width: 0;
+    }
+
+    15% {
+        width: 35%;
+    }
+
+    100% {
+        width: 92%;
+    }
+}
+
+.ali-docs-container {
+    transition: opacity .2s ease;
+}
+
+turbo-frame#content[busy] > .ali-docs-container {
+    opacity: .55;
+    transition: opacity .2s ease .15s;
+}
+
+/* --------------------------------------------------------------------------
+   Error pages (404, 403, 500)
+   -------------------------------------------------------------------------- */
+.ali-docs-error {
+    max-width: 560px;
+    padding: 3rem 0;
+}
+
+.ali-docs-error-code {
+    margin-bottom: .25rem;
+    color: var(--ali-docs-accent);
+    font-size: 3.5rem;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -.03em;
+}
+
+.ali-docs-error .ali-docs-title {
+    margin-bottom: .75rem;
+}
+
+.ali-docs-error .ali-docs-muted {
+    margin-bottom: 1.75rem;
+}
+
+/* Button */
+.ali-docs-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .55rem 1rem;
+    border-radius: var(--ali-docs-radius-sm);
+    background-color: var(--ali-docs-accent);
+    color: #fff !important;
+    font-size: .925rem;
+    font-weight: 500;
+    transition: background-color var(--ali-docs-transition);
+}
+
+.ali-docs-btn:hover {
+    background-color: color-mix(in srgb, var(--ali-docs-accent) 85%, #000);
+}

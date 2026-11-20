@@ -1,0 +1,33 @@
+{% extends '@AliDocs/base.html.twig' %}
+
+{% if status_code == 404 %}
+	{% set error_title = 'Page not found' | trans({}, 'ali_docs') %}
+	{% set error_message = 'The page you are looking for does not exist or has been moved.' | trans({}, 'ali_docs') %}
+{% elseif status_code == 403 %}
+	{% set error_title = 'Access denied' | trans({}, 'ali_docs') %}
+	{% set error_message = 'You are not allowed to see this page.' | trans({}, 'ali_docs') %}
+{% else %}
+	{% set error_title = 'An error occurred' | trans({}, 'ali_docs') %}
+	{% set error_message = 'The page can not be displayed. Please try again later.' | trans({}, 'ali_docs') %}
+{% endif %}
+
+{% block title %}{{ error_title }} | {{ doc_title }}{% endblock %}
+
+{# Sidebar : 404 only (a 403 must not show the content of the documentation) #}
+{% block sidebar %}
+	{% if show_sidebar %}
+		{{ parent() }}
+	{% endif %}
+{% endblock %}
+
+{% block content %}
+	<div class="ali-docs-error">
+		<p class="ali-docs-error-code">{{ status_code }}</p>
+		<h1 class="ali-docs-title">{{ error_title }}</h1>
+		<p class="ali-docs-muted">{{ error_message }}</p>
+		<a class="ali-docs-btn" href="{{ path('ali_docs_index', { 'doc_key': doc_key }) }}" data-turbo-frame="_top">
+			<i class="bi bi-arrow-left"></i>
+			{{- 'Back to the documentation home' | trans({}, 'ali_docs') -}}
+		</a>
+	</div>
+{% endblock %}

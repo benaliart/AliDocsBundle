@@ -1,0 +1,36 @@
+{% set root_url = path( 'ali_docs_index', { 'doc_key': doc_key}) %}
+{% set folder_url = path( 'ali_docs_show', { 'doc_key': doc_key, 'path' : item.getUrl()}) %}
+{% set admin_url = path( 'ali_docs_admin_edit', { 'doc_key': doc_key, path : item.getUrl()}) %}
+
+{# current : the folder index is displayed / active : the current page is inside the folder #}
+{% set current = current_url == folder_url %}
+{% set active = current or current_url starts with folder_url ~ '/' or current_url starts with admin_url ~ '/' %}
+
+{% set folder_id = random() %}
+<div class="ali-docs-nav-folder">
+	<div class="tree_element dir_element ali-docs-nav-folder-row {{ active ? 'active' }} {{ current ? 'current' }}" data-url="{{ folder_url }}" data-admin-url="{{ admin_url }}">
+		{# Folder name : opens the folder index #}
+		<a class="ali-docs-nav-folder-link" href="{{ folder_url }}" data-turbo-frame="content" data-turbo-action="advance" {% if current %}aria-current="page"{% endif %}>
+			{{- item.getName() -}}
+		</a>
+		{# Chevron : shows / hides the folder content #}
+		<button class="ali-docs-nav-toggle {{ active ? '' : 'collapsed' }}" type="button" data-bs-toggle="collapse" data-bs-target="#ali-docs-folder-{{ folder_id }}" aria-expanded="{{ active ? 'true' : 'false' }}" aria-controls="ali-docs-folder-{{ folder_id }}" aria-label="{{ item.getName() }}">
+			<i class="bi bi-chevron-right ali-docs-chevron"></i>
+		</button>
+	</div>
+	<div id="ali-docs-folder-{{ folder_id }}" class="accordion-collapse collapse {{ active ? 'show' }}">
+		<div class="ali-docs-nav-children">
+			{% for child in item.getChildren() %}
+
+				{% if child.isDirectory() %}
+					{% include '@AliDocs/documentation/_doc_item.html.twig' with { 'item': child, 'current_url': current_url } %}
+				{% endif %}
+
+				{% if child.isFile() %}
+					{% include '@AliDocs/documentation/_file_item.html.twig' with { 'item': child, 'current_url': current_url } %}
+				{% endif %}
+
+			{% endfor %}
+		</div>
+	</div>
+</div>
