@@ -19,6 +19,36 @@ php bin/console assets:install public
 
 See the installation guide for the details.
 
+## Configuration example
+
+```yaml
+# config/packages/ali_docs.yaml
+ali_docs:
+    layout:
+        home_url: '/'                 # link back to the application
+        logo: '/images/logo.svg'      # logo of the application in the header
+        favicon: '/favicon.ico'
+        extra_css: ['/css/docs.css']  # ex: colors
+    documentations:
+        user_guide:
+            doc_dir: '%kernel.project_dir%/docs/user_guide'
+            title: User guide
+            view_security: ROLE_USER
+            edit_security: ROLE_ADMIN
+```
+
+The colors are CSS variables declared on the `.ali-docs` container (not on `:root`). Override them with the same selector:
+
+```css
+/* public/css/docs.css */
+.ali-docs {
+    --ali-docs-accent: #7647f7;
+    --ali-docs-accent-soft: #f1ecfe;
+}
+```
+
+All the options: [Configuration](docs/30__Configuration.md).
+
 ## Documentation
 
 - [Introduction](docs/10__Introduction.md): features and roadmap

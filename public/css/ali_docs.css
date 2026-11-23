@@ -99,6 +99,16 @@
     font-size: 1rem;
 }
 
+/* Logo of the application (layout.logo), instead of the default icon */
+.ali-docs-brand-logo {
+    display: block;
+    width: auto;
+    max-width: 160px;
+    height: 32px;
+    flex-shrink: 0;
+    object-fit: contain;
+}
+
 .ali-docs-brand-title {
     overflow: hidden;
     text-overflow: ellipsis;

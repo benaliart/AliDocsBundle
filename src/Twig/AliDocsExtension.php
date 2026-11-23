@@ -13,7 +13,7 @@ use Twig\Extension\GlobalsInterface;
 class AliDocsExtension extends AbstractExtension implements GlobalsInterface
 {
     /**
-     * @param array{home_url: ?string, home_label: ?string, favicon: ?string, extra_css: string[], extra_js: string[]} $layout
+     * @param array{home_url: ?string, home_label: ?string, favicon: ?string, logo: ?string, extra_css: string[], extra_js: string[]} $layout
      */
     public function __construct(
         private array $layout,

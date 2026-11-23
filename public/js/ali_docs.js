@@ -109,6 +109,39 @@ function updateActiveLink() {
     }
 }
 
+/**
+ * LINKS TO A SECTION OF ANOTHER PAGE (page.md#my-section)
+ * The content frame is loaded with fetch, which never sends the anchor : it is kept on click,
+ * then added back to the url and the section is scrolled into view when the page is loaded.
+ */
+let aliDocsPendingHash = null;
+
+document.addEventListener('click', (event) => {
+    const link = event.target.closest('.ali-docs a[href*="#"]');
+    if (!link) {
+        return;
+    }
+    const url = new URL(link.href, window.location.href);
+    if (url.hash && url.pathname !== window.location.pathname) {
+        aliDocsPendingHash = url.hash;
+    }
+}, true);
+
+function aliDocsScrollToHash() {
+    const hash = aliDocsPendingHash || window.location.hash;
+    aliDocsPendingHash = null;
+    if (!hash) {
+        return;
+    }
+    if (!window.location.hash) {
+        history.replaceState(history.state, '', hash);
+    }
+    const target = document.getElementById(decodeURIComponent(hash.slice(1)));
+    if (target) {
+        target.scrollIntoView();
+    }
+}
+
 // Small screens : close the sidebar panel (offcanvas) after a navigation
 function aliDocsCloseSidebar() {
     const sidebar = document.getElementById('ali-docs-sidebar');
@@ -126,6 +159,7 @@ document.addEventListener('turbo:load', updateActiveLink);
 document.addEventListener('turbo:frame-load', () => setTimeout(() => {
     updateActiveLink();
     aliDocsCloseSidebar();
+    aliDocsScrollToHash();
 }, 0));
 
 // A frame navigation returned a page without the "content" frame (error page, 404...) :

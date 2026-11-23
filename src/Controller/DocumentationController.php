@@ -120,7 +120,8 @@ class DocumentationController extends AbstractController
 
         // Content Markdown to html : the HTML of the page is cleaned (no script, iframe, events...)
         $htmlContent = $markdownParser->toHtml($docFileContent);
-        $htmlContent = $markdownParser->replaceSrcUrls($htmlContent, $doc_key);
+        // Relative images / videos : absolute urls (Turbo inserts the page before changing the browser url)
+        $htmlContent = $markdownParser->replaceSrcUrls($htmlContent, $doc_key, $path);
 
         $fileName = pathinfo($filePath, PATHINFO_FILENAME);
         $fileRelativePath = DIRECTORY_SEPARATOR . $path;
@@ -194,7 +195,6 @@ class DocumentationController extends AbstractController
             throw $this->createNotFoundException("The page \"$path\" does not exist.");
         }
         $docFileContent = $this->documentationService->getDocFileContent($filePath);
-        $docFileContent = $markdownParser->replaceSrcUrls($docFileContent, $doc_key);
 
         $form = $this->createForm(MarkdownEditorType::class, [
             'position' => $position,

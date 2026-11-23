@@ -55,13 +55,36 @@ Result:
 
 Types: `tip`, `info`, `warning`, `danger`. Any other type is displayed as a neutral box.
 
+A box can contain several paragraphs, lists, links...: write `:::type` and `:::` on their own lines.
+
+```markdown
+:::warning
+Before deleting a user:
+
+- export their data,
+- check their documents.
+:::
+```
+
 ## Links between pages
 
 Use relative links to the files, with or without the `.md` extension:
 
 ```markdown
-See [Installation](../20__Getting started/10__Installation.md).
+See [First steps](20__Getting%20started/20__First%20steps.md).
 ```
+
+In the Markdown links and images, the spaces must be written `%20`: Markdown stops the link at the first space. Accents can be written as is.
+
+### Link to a section
+
+The `##` and `###` headings get an id made from their text (lowercase, without accents, words separated by `-`). Add it after `#` to link to a section:
+
+```markdown
+See [the settings](30__Guides/20__Settings.md#user-settings).
+```
+
+Here the target is the heading `## User settings`. If two headings have the same text, the second one gets `-2` (`#user-settings-2`).
 
 ## Images, videos and files
 
@@ -78,6 +101,8 @@ Media files are stored in the documentation folder, next to the pages or in an `
 ```
 
 Allowed file types: `pdf`, `jpg`, `jpeg`, `png`, `mp4`, `webm`.
+
+As for the links, write the spaces `%20` in the Markdown images: `![Users](assets/users%20list.png)`. In the HTML tags (`<video>`, `<source>`...), the spaces can be written as is.
 
 ## HTML
 

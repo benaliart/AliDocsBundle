@@ -63,6 +63,7 @@ ali_docs:
         home_url: '/'                 # link back to the application, in the header
         home_label: 'My application'  # default: "Home" (translated)
         favicon: '/favicon.ico'
+        logo: '/images/logo.svg'      # logo of the application in the header
         extra_css: ['/css/docs.css']  # stylesheets of the application
         extra_js: []                  # scripts of the application (ex: statistics)
 ```
@@ -72,7 +73,8 @@ ali_docs:
 | `home_url` | `null` | URL of the link back to the application, displayed on the right of the header (ex: `/`, `https://example.com`). Empty: no link. The link opens the page outside the documentation (full page load). |
 | `home_label` | `null` | Text of the link back to the application. Empty: "Home" (translated). On small screens, only the icon is displayed. |
 | `favicon` | `null` | Favicon of the pages: path in the `public` folder (ex: `/favicon.ico`) or URL. Empty: no favicon. |
-| `extra_css` | `[]` | Stylesheets added to the pages, after the bundle stylesheets: they can override its styles (see [Look](#look)). Paths in the `public` folder or URLs. |
+| `logo` | `null` | Logo of the application displayed in the header, before the documentation title, instead of the default icon: path in the `public` folder (ex: `/images/logo.svg`) or URL. Displayed 32px high. Empty: default icon. |
+| `extra_css` | `[]` | Stylesheets added to the pages, after the bundle stylesheets: they can override its styles. The CSS variables must be overridden on `.ali-docs`, not on `:root` (see [Look](#look)). Paths in the `public` folder or URLs. |
 | `extra_js` | `[]` | Scripts added to the pages, loaded with `defer` (ex: statistics). Paths in the `public` folder or URLs. |
 
 All the options are optional. The paths are passed to the Symfony `asset()` function.
@@ -132,7 +134,9 @@ ali_docs:
 
 ## Look
 
-The styles of the bundle are scoped to the `.ali-docs` container and use CSS variables. To change them, override the variables in a stylesheet of the application:
+The styles of the bundle are scoped to the `.ali-docs` container and use CSS variables.
+
+The variables are declared on `.ali-docs`, not on `:root`: a variable overridden on `:root` has no effect. Override them with the `.ali-docs` selector, in a stylesheet of the application:
 
 ```css
 .ali-docs {

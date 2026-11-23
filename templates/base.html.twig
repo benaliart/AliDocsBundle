@@ -52,7 +52,12 @@
 						</button>
 
 						<a class="ali-docs-brand" href="{{ path('ali_docs_index', {'doc_key' : doc_key}) }}">
-							<span class="ali-docs-brand-icon"><i class="bi bi-journal-text"></i></span>
+							{# Logo of the application (layout.logo) or default icon #}
+							{% if ali_docs.layout.logo %}
+								<img class="ali-docs-brand-logo" src="{{ asset(ali_docs.layout.logo) }}" alt="">
+							{% else %}
+								<span class="ali-docs-brand-icon"><i class="bi bi-journal-text"></i></span>
+							{% endif %}
 							<span class="ali-docs-brand-title">{{ doc_title }}</span>
 						</a>
 
