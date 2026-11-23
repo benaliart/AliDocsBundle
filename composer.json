@@ -1,6 +1,5 @@
 {
     "name": "aliarteo/ali-docs-bundle",
-    "version": "1.0",
     "description": "A Symfony Bundle to build documentation websites from Markdown files.",
     "type": "symfony-bundle",
     "keywords": [
@@ -34,11 +33,6 @@
     "autoload": {
         "psr-4": {
             "Aliarteo\\AliDocsBundle\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Aliarteo\\AliDocsBundle\\Tests\\": "tests/"
         }
     }
 }

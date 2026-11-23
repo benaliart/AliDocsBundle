@@ -12,13 +12,12 @@ A documentation is a folder of Markdown files and sub-folders. The bundle builds
 ## Quick start
 
 ```console
-git clone https://github.com/benaliart/AliDocsBundle.git AliDocsBundle
 composer require aliarteo/ali-docs-bundle
 php bin/console ali-docs:install
 php bin/console assets:install public
 ```
 
-The bundle is not published on Packagist yet: it is installed from the cloned folder (Composer "path" repository). See the installation guide for the details.
+See the installation guide for the details.
 
 ## Documentation
 

@@ -8,30 +8,9 @@
 
 The documentation pages have their own layout and assets (Bootstrap 5, Turbo): they do not depend on the templates or the front-end tools of the application.
 
-## Step 1: Download the bundle
+## Step 1: Install the bundle
 
 In the project directory:
-
-```console
-git clone https://github.com/benaliart/AliDocsBundle.git AliDocsBundle
-```
-
-This creates the `AliDocsBundle` folder at the root of the project.
-
-## Step 2: Declare the folder in composer.json
-
-Add a `path` repository to the `composer.json` file of the project:
-
-```json
-"repositories": [
-    {
-        "type": "path",
-        "url": "AliDocsBundle"
-    }
-],
-```
-
-## Step 3: Install the bundle
 
 ```console
 composer require aliarteo/ali-docs-bundle
@@ -48,7 +27,7 @@ return [
 ];
 ```
 
-## Step 4: Create the configuration and routes files
+## Step 2: Create the configuration and routes files
 
 ```console
 php bin/console ali-docs:install
@@ -61,7 +40,7 @@ This command creates:
 
 Existing files are kept. Use `--force` to replace them.
 
-## Step 5: Install the assets
+## Step 3: Install the assets
 
 ```console
 php bin/console assets:install public
@@ -69,7 +48,7 @@ php bin/console assets:install public
 
 This copies the CSS and JavaScript files of the bundle to `public/bundles/alidocs`. Run it again after each update of the bundle.
 
-## Step 6: Create a documentation
+## Step 4: Create a documentation
 
 Create the folder declared in `config/packages/ali_docs.yaml` (for example `doc_public/`) and add a first Markdown file:
 
@@ -83,10 +62,7 @@ The documentation is available at `/doc-public` (the `_` of the documentation ke
 ## Update
 
 ```console
-cd AliDocsBundle
-git pull
-cd ..
-composer install
+composer update aliarteo/ali-docs-bundle
 php bin/console cache:clear
 php bin/console assets:install public
 ```
