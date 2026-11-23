@@ -6,53 +6,77 @@
 
 {% block content %}
 
-	<div class="ali-docs-page-header">
+	{# Table of contents on the right : at least 2 headings #}
+	{% set show_toc = headings | default([]) | length >= 2 %}
 
-		{{ include('@AliDocs/documentation/_breadcrumb.html.twig', { folders: breadcrumb, current: doc_file.name }) }}
+	<div class="ali-docs-page {{ show_toc ? 'ali-docs-page-with-toc' }}">
+		<div class="ali-docs-page-main">
 
-		{% if is_granted(edit_security) %}
-			<div class="dropdown ms-auto">
-				<button type="button" class="ali-docs-icon-btn" data-bs-toggle="dropdown" aria-expanded="false" aria-label="{{ 'Page options' | trans({}, 'ali_docs') }}">
-					<i class="bi bi-three-dots"></i>
-				</button>
-				<ul class="dropdown-menu dropdown-menu-end shadow-sm">
-					<li>
-						<a class="dropdown-item" href="{{ path('ali_docs_admin_edit', { 'doc_key' : doc_key, 'path' : path })}}" data-turbo-frame="_top">
-							<i class="bi bi-pencil me-2"></i>
-							{{- 'Edit' | trans({}, 'ali_docs') -}}
-						</a>
-					</li>
-				</ul>
+			<div class="ali-docs-page-header">
+
+				{{ include('@AliDocs/documentation/_breadcrumb.html.twig', { folders: breadcrumb, current: doc_file.name }) }}
+
+				{% if is_granted(edit_security) %}
+					<div class="dropdown ms-auto">
+						<button type="button" class="ali-docs-icon-btn" data-bs-toggle="dropdown" aria-expanded="false" aria-label="{{ 'Page options' | trans({}, 'ali_docs') }}">
+							<i class="bi bi-three-dots"></i>
+						</button>
+						<ul class="dropdown-menu dropdown-menu-end shadow-sm">
+							<li>
+								<a class="dropdown-item" href="{{ path('ali_docs_admin_edit', { 'doc_key' : doc_key, 'path' : path })}}" data-turbo-frame="_top">
+									<i class="bi bi-pencil me-2"></i>
+									{{- 'Edit' | trans({}, 'ali_docs') -}}
+								</a>
+							</li>
+						</ul>
+					</div>
+				{% endif %}
+
 			</div>
+
+			<article class="markdown-body">{{ content|raw }}</article>
+
+			{% if prev_file or next_file %}
+				<nav class="ali-docs-pager" aria-label="{{ 'Page navigation' | trans({}, 'ali_docs') }}">
+					{% if prev_file %}
+						<a class="ali-docs-pager-link" href="{{ path('ali_docs_show', { 'doc_key': doc_key, 'path': prev_file.getUrl() }) }}" rel="prev">
+							<span class="ali-docs-pager-label">
+								<i class="bi bi-arrow-left"></i>
+								{{- 'Previous' | trans({}, 'ali_docs') -}}
+							</span>
+							<span class="ali-docs-pager-title">{{ prev_file.getName() }}</span>
+						</a>
+					{% else %}
+						<span></span>
+					{% endif %}
+					{% if next_file %}
+						<a class="ali-docs-pager-link ali-docs-pager-next" href="{{ path('ali_docs_show', { 'doc_key': doc_key, 'path': next_file.getUrl() }) }}" rel="next">
+							<span class="ali-docs-pager-label">
+								{{- 'Next' | trans({}, 'ali_docs') -}}
+								<i class="bi bi-arrow-right"></i>
+							</span>
+							<span class="ali-docs-pager-title">{{ next_file.getName() }}</span>
+						</a>
+					{% endif %}
+				</nav>
+			{% endif %}
+
+		</div>
+
+		{# "On this page" : h2 / h3 headings of the page, the current section is highlighted (ali_docs.js) #}
+		{% if show_toc %}
+			<nav class="ali-docs-toc" aria-label="{{ 'On this page' | trans({}, 'ali_docs') }}">
+				<p class="ali-docs-toc-title">{{ 'On this page' | trans({}, 'ali_docs') }}</p>
+				<ul>
+					{% for heading in headings %}
+						<li class="ali-docs-toc-level-{{ heading.level }}">
+							{# data-turbo="false" : anchor in the page, scrolled by the browser #}
+							<a href="#{{ heading.id }}" data-turbo="false">{{ heading.title }}</a>
+						</li>
+					{% endfor %}
+				</ul>
+			</nav>
 		{% endif %}
-
 	</div>
-
-	<article class="markdown-body">{{ content|raw }}</article>
-
-	{% if prev_file or next_file %}
-		<nav class="ali-docs-pager" aria-label="{{ 'Page navigation' | trans({}, 'ali_docs') }}">
-			{% if prev_file %}
-				<a class="ali-docs-pager-link" href="{{ path('ali_docs_show', { 'doc_key': doc_key, 'path': prev_file.getUrl() }) }}" rel="prev">
-					<span class="ali-docs-pager-label">
-						<i class="bi bi-arrow-left"></i>
-						{{- 'Previous' | trans({}, 'ali_docs') -}}
-					</span>
-					<span class="ali-docs-pager-title">{{ prev_file.getName() }}</span>
-				</a>
-			{% else %}
-				<span></span>
-			{% endif %}
-			{% if next_file %}
-				<a class="ali-docs-pager-link ali-docs-pager-next" href="{{ path('ali_docs_show', { 'doc_key': doc_key, 'path': next_file.getUrl() }) }}" rel="next">
-					<span class="ali-docs-pager-label">
-						{{- 'Next' | trans({}, 'ali_docs') -}}
-						<i class="bi bi-arrow-right"></i>
-					</span>
-					<span class="ali-docs-pager-title">{{ next_file.getName() }}</span>
-				</a>
-			{% endif %}
-		</nav>
-	{% endif %}
 
 {% endblock %}

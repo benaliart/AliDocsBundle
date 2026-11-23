@@ -19,6 +19,7 @@ A documentation is a folder of Markdown files. Each documentation is declared in
 - Sidebar with the folders and pages, in the order of the files.
 - Home page of each documentation, and an index page for each folder: one card per folder (with its first pages) and per page (with a short intro of its content).
 - Breadcrumb at the top of the pages, previous / next links at the bottom.
+- Table of contents of the page ("On this page") on wide screens, with the current section highlighted.
 - Search in the page names and contents, with an excerpt around the word found.
 - Menu to switch to another documentation (for example another version).
 - Responsive layout: on small screens, the sidebar and the search are in a side panel.

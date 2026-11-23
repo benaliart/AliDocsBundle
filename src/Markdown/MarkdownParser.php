@@ -165,6 +165,22 @@ class MarkdownParser
     }
 
     /**
+     * Headings of the page with an id (h2, h3) : table of contents ("On this page")
+     *
+     * @return array<array{level: int, id: string, title: string}>
+     */
+    public function getHeadings(string $html): array
+    {
+        preg_match_all('#<h([23]) id="([^"]+)">(.*?)</h\1>#s', $html, $matches, \PREG_SET_ORDER);
+
+        return array_map(static fn (array $match): array => [
+            'level' => (int) $match[1],
+            'id' => $match[2],
+            'title' => trim(html_entity_decode(strip_tags($match[3]), \ENT_QUOTES | \ENT_HTML5, 'UTF-8')),
+        ], $matches);
+    }
+
+    /**
      * Markdown => HTML cleaned by the sanitizer
      */
     private function markdownToCleanHtml(string $markdown): string

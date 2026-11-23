@@ -138,6 +138,8 @@ class DocumentationController extends AbstractController
         $arg_render['next_file'] = $prevNext['next'];
         $arg_render['doc_title'] = $this->getDocTitle($doc_key);
         $arg_render['content'] = $htmlContent;
+        // Table of contents ("On this page") : h2 / h3 headings of the page
+        $arg_render['headings'] = $markdownParser->getHeadings($htmlContent);
         $arg_render['edit_security'] = $edit_security;
         $arg_render['path'] = $path;
         $template = "@AliDocs/documentation/show.html.twig";

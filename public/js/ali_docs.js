@@ -127,11 +127,12 @@ document.addEventListener('click', (event) => {
     }
 }, true);
 
+// Returns true if the page was scrolled to a section
 function aliDocsScrollToHash() {
     const hash = aliDocsPendingHash || window.location.hash;
     aliDocsPendingHash = null;
     if (!hash) {
-        return;
+        return false;
     }
     if (!window.location.hash) {
         history.replaceState(history.state, '', hash);
@@ -139,6 +140,17 @@ function aliDocsScrollToHash() {
     const target = document.getElementById(decodeURIComponent(hash.slice(1)));
     if (target) {
         target.scrollIntoView();
+        return true;
+    }
+    return false;
+}
+
+// New page in the content frame : back to the top (the scrolled container is outside the frame,
+// so its scroll position would be kept from the previous page)
+function aliDocsScrollToTop() {
+    const content = document.querySelector('.ali-docs-content');
+    if (content) {
+        content.scrollTop = 0;
     }
 }
 
@@ -153,13 +165,64 @@ function aliDocsCloseSidebar() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', updateActiveLink);
-document.addEventListener('turbo:load', updateActiveLink);
+/**
+ * TABLE OF CONTENTS ("On this page") : highlights the section currently read
+ * (last heading above the top of the content, or the last one at the bottom of the page)
+ */
+function aliDocsUpdateToc() {
+    const toc = document.querySelector('.ali-docs-toc');
+    const content = document.querySelector('.ali-docs-content');
+    if (!toc || !content) {
+        return;
+    }
+
+    const links = [...toc.querySelectorAll('a[href^="#"]')];
+    const limit = content.getBoundingClientRect().top + 80;
+    let current = links[0] || null;
+
+    for (const link of links) {
+        const heading = document.getElementById(decodeURIComponent(link.getAttribute('href').slice(1)));
+        if (heading && heading.getBoundingClientRect().top <= limit) {
+            current = link;
+        }
+    }
+    if (links.length && content.scrollTop + content.clientHeight >= content.scrollHeight - 2 && content.scrollTop > 0) {
+        current = links[links.length - 1];
+    }
+
+    links.forEach(link => link.classList.toggle('active', link === current));
+}
+
+// Scroll of the content (scroll events do not bubble : listened in the capture phase)
+let aliDocsTocTicking = false;
+document.addEventListener('scroll', (event) => {
+    if (aliDocsTocTicking || !event.target.classList || !event.target.classList.contains('ali-docs-content')) {
+        return;
+    }
+    aliDocsTocTicking = true;
+    requestAnimationFrame(() => {
+        aliDocsTocTicking = false;
+        aliDocsUpdateToc();
+    });
+}, true);
+
+document.addEventListener('DOMContentLoaded', () => {
+    updateActiveLink();
+    aliDocsUpdateToc();
+});
+document.addEventListener('turbo:load', () => {
+    updateActiveLink();
+    aliDocsUpdateToc();
+});
 // Frame navigation : wait for Turbo to update the browser url
 document.addEventListener('turbo:frame-load', () => setTimeout(() => {
     updateActiveLink();
     aliDocsCloseSidebar();
-    aliDocsScrollToHash();
+    // Link to a section (page#my-section) : scroll to it, otherwise back to the top of the page
+    if (!aliDocsScrollToHash()) {
+        aliDocsScrollToTop();
+    }
+    aliDocsUpdateToc();
 }, 0));
 
 // A frame navigation returned a page without the "content" frame (error page, 404...) :

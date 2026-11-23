@@ -76,7 +76,10 @@ See [First steps](20__Getting%20started/20__First%20steps.md).
 
 In the Markdown links and images, the spaces must be written `%20`: Markdown stops the link at the first space. Accents can be written as is.
 
-### Link to a section
+### Table of contents and link to a section
+
+On wide screens, the `##` and `###` headings of a page are listed on the right ("On this page"), when the page has at least two of them.
+
 
 The `##` and `###` headings get an id made from their text (lowercase, without accents, words separated by `-`). Add it after `#` to link to a section:
 
