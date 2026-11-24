@@ -63,7 +63,7 @@ class ErrorPageListener
             return;
         }
 
-        $documentation = $this->documentations[str_replace('-', '_', $docKey)] ?? null;
+        $documentation = $this->documentations[$docKey] ?? null;
         if (null === $documentation) {
             return;
         }

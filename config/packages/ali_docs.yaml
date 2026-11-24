@@ -4,24 +4,28 @@ ali_docs:
     # Url prefix of the edit pages
     admin_path: '/admin_documentation'
 
+    # Maximum size of a media file sent from the editor (the PHP limits also apply)
+    # upload_max_size: '64M'
+
     # The documentation pages have their own layout, independent of the application
     # layout:
-    #     home_url: '/'               # link back to the application, in the header
-    #     home_label: 'My application'
+    #     home_url: '/'                 # link back to the application, in the header
+    #     home_label: 'My application'  # default : "Home" (translated)
     #     favicon: '/favicon.ico'
-    #     extra_css: ['/css/docs.css']
-    #     extra_js: []
+    #     logo: '/images/logo.svg'      # logo of the application in the header, instead of the default icon
+    #     extra_css: ['/css/docs.css']  # stylesheets of the application (ex : colors)
+    #     extra_js: []                  # scripts of the application (ex : statistics)
 
     documentations:
-        doc_public:
-            doc_dir: '%kernel.project_dir%/doc_public'
+        doc-public:
+            doc_dir: '%kernel.project_dir%/doc-public'
             title: Public documentation
             view_security: PUBLIC_ACCESS
             edit_security: ROLE_ADMIN
-            switch_doc: [doc_admin]
-        doc_admin:
-            doc_dir: '%kernel.project_dir%/doc_admin'
+            switch_doc: [doc-admin]
+        doc-admin:
+            doc_dir: '%kernel.project_dir%/doc-admin'
             title: Admin documentation
             view_security: ROLE_ADMIN
             edit_security: ROLE_ADMIN
-            switch_doc: [doc_public]
+            switch_doc: [doc-public]

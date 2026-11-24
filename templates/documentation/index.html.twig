@@ -6,7 +6,13 @@
 
 {% block content %}
 
-	<h1 class="ali-docs-title">{{ doc_title }}</h1>
+	<div class="ali-docs-title-row">
+		<h1 class="ali-docs-title">{{ doc_title }}</h1>
+
+		{% if is_granted(edit_security) %}
+			{{ include('@AliDocs/documentation/_admin_menu.html.twig') }}
+		{% endif %}
+	</div>
 
 	{{ include('@AliDocs/documentation/_cards.html.twig') }}
 

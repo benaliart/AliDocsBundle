@@ -14,35 +14,26 @@ use Symfony\Component\Filesystem\Filesystem;
  */
 class DocumentationService
 {
+    /**
+     * Media files of the documentations (served, uploaded) : extension => MIME type
+     * The MIME type is fixed, never guessed from the file content when the file is served
+     */
+    public const MEDIA_TYPES = [
+        'pdf' => 'application/pdf',
+        'jpg' => 'image/jpeg',
+        'jpeg' => 'image/jpeg',
+        'png' => 'image/png',
+        'gif' => 'image/gif',
+        'webp' => 'image/webp',
+        'mp4' => 'video/mp4',
+        'webm' => 'video/webm',
+    ];
+
     private Filesystem $filesystem;
 
     public function __construct()
     {
         $this->filesystem = new Filesystem();
-    }
-    
-    /**
-     * normalizeDocKey
-     * Transforme les _ en - dans la clé
-     *
-     * @param  mixed $key
-     * @return string
-     */
-    public static function normalizeDocKey(string $key): string
-    {
-        return str_replace('-', '_', $key);
-    }
-    
-    /**
-     * denormalizeDocKey
-     * Transforme les - en _ dans la clé
-     *
-     * @param  mixed $key
-     * @return string
-     */
-    public static function denormalizeDocKey(string $key): string
-    {
-        return str_replace('_', '-', $key);
     }
     
     public function getDirectoryTree(string $directory, ?string $basePath = null, $depth = 0): DocDir
@@ -227,6 +218,7 @@ class DocumentationService
         $text = preg_replace('/:::\w*/u', ' ', $text);                       // Custom blocks (:::tip ... :::)
         $text = preg_replace('/!\[[^\]]*\]\([^)]*\)/u', ' ', $text);         // Images
         $text = preg_replace('/\[([^\]]*)\]\([^)]*\)/u', '$1', $text);       // Links : keep the label
+        $text = preg_replace('/^\s*[-*+]\s+\[[ xX]\]\s+/mu', '', $text);      // Task lists (- [ ] ...)
         $text = preg_replace('/^\s{0,3}(#{1,6}|>|[-*+]|\d+\.)\s+/mu', '', $text); // Headings, quotes, lists
         $text = preg_replace('/(\*\*|__|\*|`+|~~)/u', '', $text);            // Emphasis, code
         $text = preg_replace('/^\s*\|?[-:| ]{3,}\|?\s*$/mu', ' ', $text);    // Table separators
@@ -329,6 +321,62 @@ class DocumentationService
         }
 
         throw new \Exception("The file $path does not exist.");
+    }
+
+    /**
+     * getNextPosition
+     * Position of a new page / folder, after the last one of the directory (ex : 30 => 40)
+     */
+    public function getNextPosition(?DocDir $dir): int
+    {
+        $max = 0;
+        foreach ($dir ? $dir->getChildren() : [] as $child) {
+            $name = basename(str_replace('\\', '/', $child->getUrl()));
+            if (preg_match('/^(\d+)__/', $name, $matches)) {
+                $max = max($max, (int) $matches[1]);
+            }
+        }
+
+        return $max + 10;
+    }
+
+    /**
+     * isFolderEmpty
+     * A folder can be deleted when it contains nothing, or only an empty "assets" folder
+     */
+    public function isFolderEmpty(string $dirPath): bool
+    {
+        if (!is_dir($dirPath)) {
+            return false;
+        }
+
+        foreach (scandir($dirPath) as $entry) {
+            if ('.' === $entry || '..' === $entry) {
+                continue;
+            }
+            if ('assets' === $entry && is_dir($dirPath . '/assets') && [] === array_diff(scandir($dirPath . '/assets'), ['.', '..'])) {
+                continue;
+            }
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * getMediaKind
+     * image, video or file (pdf...), from the file extension
+     */
+    public static function getMediaKind(string $fileName): string
+    {
+        $mimeType = self::MEDIA_TYPES[strtolower(pathinfo($fileName, PATHINFO_EXTENSION))] ?? '';
+
+        return match (true) {
+            str_starts_with($mimeType, 'image/') => 'image',
+            str_starts_with($mimeType, 'video/') => 'video',
+            default => 'file',
+        };
     }
 
 

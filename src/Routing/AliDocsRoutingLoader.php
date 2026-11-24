@@ -25,11 +25,9 @@ class AliDocsRoutingLoader extends Loader
 
         $req_doc_key = array();
 
-        foreach ($this->documentations as $key => $doc) {
-            // $urlPrefix = $doc['url_prefix'] ?? '/default';
-            // $title = $doc['title'] ?? 'Documentation';
-            $req_doc_key[] = $this->documentationService->denormalizeDocKey($key);
-            // $req_doc_key[] = $doc['doc_url'];
+        // The key of each documentation is its url (checked by the bundle configuration : letters, numbers, "-", "_")
+        foreach (array_keys($this->documentations) as $key) {
+            $req_doc_key[] = preg_quote((string) $key, '#');
         }
 
         // Index
@@ -79,10 +77,31 @@ class AliDocsRoutingLoader extends Loader
         $routeName = 'ali_docs_show';
         $routes->add($routeName, $route);
 
-        // Admin Show
+        // Edition actions : "_actions" is not a documentation key, no conflict with the edit pages
+        $adminController = 'Aliarteo\\AliDocsBundle\\Controller\\DocumentationAdminController';
+        $actions = [
+            'ali_docs_admin_create' => ['create', 'create', 'POST'],
+            'ali_docs_admin_delete' => ['delete', 'delete', 'POST'],
+            'ali_docs_admin_preview' => ['preview', 'preview', 'POST'],
+            'ali_docs_admin_media_list' => ['media', 'mediaList', 'GET'],
+            'ali_docs_admin_media_upload' => ['media', 'mediaUpload', 'POST'],
+            'ali_docs_admin_pages' => ['pages', 'pages', 'GET'],
+            'ali_docs_admin_media_delete' => ['media/delete', 'mediaDelete', 'POST'],
+        ];
+        foreach ($actions as $routeName => [$action, $method, $httpMethod]) {
+            $route = new Route(
+                $this->admin_path . '/_actions/{doc_key}/' . $action,
+                ['_controller' => $adminController . '::' . $method],
+                ['doc_key' => implode("|", $req_doc_key)],
+            );
+            $route->setMethods([$httpMethod]);
+            $routes->add($routeName, $route);
+        }
+
+        // Edit page
         $path = $this->admin_path . "/{doc_key}/{path}";
         $defaults = [
-            '_controller' => 'Aliarteo\\AliDocsBundle\\Controller\\DocumentationController::edit',
+            '_controller' => $adminController . '::edit',
         ];
         $requirements = [
             'doc_key' => implode("|", $req_doc_key),

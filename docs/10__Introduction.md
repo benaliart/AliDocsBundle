@@ -28,15 +28,19 @@ A documentation is a folder of Markdown files. Each documentation is declared in
 
 - Markdown files, with optional HTML (cleaned before being displayed, see [Writing a documentation](40__Writing.md)).
 - Boxes for tips, information, warnings (`:::tip ... :::`), with one or several paragraphs.
+- Task lists (`- [ ]` / `- [x]`), displayed with checkboxes.
 - Links to a section of a page (`page.md#my-section`).
 - Images, videos and PDF files stored with the pages.
-- Edit page in the browser: Markdown editor, page name and position. `Ctrl + S` saves the page.
+- Edition in the browser: Markdown editor with a toolbar (formatting, boxes, tables...) and a preview, page name and position. `Ctrl + S` saves the page.
+- Images, videos and PDF files sent from the editor (button, drag and drop, paste).
+- New pages and folders, deletion of a page or an empty folder.
 
 ### Access and security
 
 - A role to read each documentation (`view_security`), or public access.
-- A role to edit each documentation (`edit_security`), required.
+- A role to edit each documentation (`edit_security`), required. The edition actions are protected by a CSRF token.
 - The paths are checked: a page can not read or write files outside its documentation folder.
+- Media files sent from the editor: allowed types only, content checked against the extension.
 
 ### Integration
 
@@ -49,4 +53,4 @@ A documentation is a folder of Markdown files. Each documentation is declared in
 
 ## Roadmap
 
-- Create pages and folders from the interface, in addition to the edition of the existing pages.
+- Display the GitHub alerts (`> [!NOTE]`, `> [!TIP]`, `> [!IMPORTANT]`, `> [!WARNING]`, `> [!CAUTION]`) as boxes, like `:::type ... :::`: the same Markdown files would be displayed with boxes on GitHub and in the documentation.

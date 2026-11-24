@@ -676,8 +676,36 @@
     line-height: 1.6;
 }
 
-.ali-docs-callout-body > :last-child {
+/* Same space above and below the text : no margin on the first / last element
+   (.ali-docs prefix : more specific than the ".markdown-body p" margins) */
+.ali-docs .ali-docs-callout-body > :first-child {
+    margin-top: 0;
+}
+
+.ali-docs .ali-docs-callout-body > :last-child {
     margin-bottom: 0;
+}
+
+/* Task lists : - [ ] / - [x] */
+.ali-docs .markdown-body li.ali-docs-task {
+    list-style: none;
+}
+
+.ali-docs .markdown-body ul:has(> li.ali-docs-task) {
+    padding-left: .25rem;
+}
+
+.ali-docs .markdown-body ul ul:has(> li.ali-docs-task) {
+    padding-left: 1.75rem;
+}
+
+.ali-docs-task-checkbox {
+    width: 1rem;
+    height: 1rem;
+    margin: 0 .5rem 0 0;
+    vertical-align: -.15em;
+    accent-color: var(--ali-docs-accent);
+    cursor: pointer;
 }
 
 .ali-docs-callout-tip {
@@ -989,18 +1017,683 @@
     font-weight: 600;
 }
 
-#markdown_editor_content {
-    display: none;
+.ali-docs .form-control {
+    border-color: var(--ali-docs-border);
+    border-radius: var(--ali-docs-radius-sm);
 }
 
-[data-item-type="button"] {
-    border: none !important;
-    height: initial !important;
-    padding-top: 0 !important;
+.ali-docs .form-control:focus {
+    border-color: color-mix(in srgb, var(--ali-docs-accent) 50%, transparent);
+    box-shadow: 0 0 0 3px var(--ali-docs-accent-soft);
 }
 
-.css-1gzrj0n {
-    border-radius: 0 !important;
+/* Header : Back / Save / options */
+.ali-docs-editor-actions {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    margin-left: auto;
+}
+
+/* Position + name */
+.ali-docs-editor-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 1rem;
+    margin-top: 1rem;
+}
+
+.ali-docs-editor-position {
+    flex: 0 0 9rem;
+}
+
+.ali-docs-editor-name {
+    flex: 1 1 18rem;
+    max-width: 32rem;
+}
+
+/* Editor : toolbar + textarea / preview */
+.ali-docs-editor {
+    border: 1px solid var(--ali-docs-border);
+    border-radius: var(--ali-docs-radius);
+    background-color: #fff;
+}
+
+.ali-docs-editor:focus-within {
+    border-color: color-mix(in srgb, var(--ali-docs-accent) 45%, transparent);
+    box-shadow: 0 0 0 3px var(--ali-docs-accent-soft);
+}
+
+/* Toolbar : stays visible at the top while scrolling a long page */
+.ali-docs-editor-bar {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .5rem 1rem;
+    padding: .4rem .5rem;
+    border-bottom: 1px solid var(--ali-docs-border);
+    border-radius: var(--ali-docs-radius) var(--ali-docs-radius) 0 0;
+    background-color: var(--ali-docs-surface);
+}
+
+.ali-docs-editor-tabs {
+    display: flex;
+    gap: .25rem;
+}
+
+.ali-docs-editor-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    padding: .35rem .75rem;
+    border: 0;
+    border-radius: var(--ali-docs-radius-sm);
+    background: transparent;
+    color: var(--ali-docs-muted);
+    font-size: .875rem;
+    font-weight: 500;
+    transition: background-color var(--ali-docs-transition), color var(--ali-docs-transition);
+}
+
+.ali-docs-editor-tab:hover {
+    color: var(--ali-docs-text);
+}
+
+.ali-docs-editor-tab.active {
+    background-color: #fff;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, .08), 0 0 0 1px var(--ali-docs-border);
+    color: var(--ali-docs-accent);
+}
+
+.ali-docs-editor-tools {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .25rem;
+    margin-left: auto;
+}
+
+/* Group of buttons, separated by a line */
+.ali-docs-editor-group {
+    display: flex;
+    align-items: center;
+    gap: .1rem;
+}
+
+.ali-docs-editor-group + .ali-docs-editor-group {
+    padding-left: .3rem;
+    border-left: 1px solid var(--ali-docs-border);
+}
+
+.ali-docs-editor-tool {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .35rem;
+    min-width: 32px;
+    height: 32px;
+    padding: 0 .4rem;
+    border: 0;
+    border-radius: var(--ali-docs-radius-sm);
+    background: transparent;
+    color: var(--ali-docs-text);
+    font-size: 1.05rem;
+    transition: background-color var(--ali-docs-transition), color var(--ali-docs-transition);
+}
+
+.ali-docs-editor-tool:hover {
+    background-color: var(--ali-docs-hover);
+    color: var(--ali-docs-accent);
+}
+
+.ali-docs-editor-tool-text span {
+    font-size: .875rem;
+    font-weight: 500;
+}
+
+/* Box buttons : colors of the boxes */
+.ali-docs-editor-tool[class*="ali-docs-callout-"] {
+    color: var(--ali-docs-callout-color);
+}
+
+.ali-docs-editor-tool[class*="ali-docs-callout-"]:hover {
+    background-color: var(--ali-docs-callout-bg);
+    color: var(--ali-docs-callout-color);
+}
+
+/* Preview : the formatting buttons are not used */
+.ali-docs-editor.is-preview [data-md-action],
+.ali-docs-editor.is-preview .ali-docs-editor-tools .dropdown > [data-bs-toggle] {
+    opacity: .35;
+    pointer-events: none;
+}
+
+/* "Write / Preview" (side by side) : large screens only */
+@media (max-width: 1199.98px) {
+    .ali-docs-editor-tab-split {
+        display: none !important;
+    }
+}
+
+/* Edit page : wider, for the side by side display */
+.ali-docs-container.ali-docs-container-wide {
+    max-width: 1600px;
+}
+
+/* Side by side : Markdown on the left, preview on the right, each panel scrolls */
+.ali-docs-editor.is-split .ali-docs-editor-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    height: calc(100vh - var(--ali-docs-header-height) - 8rem);
+    min-height: 420px;
+}
+
+.ali-docs .ali-docs-editor.is-split .ali-docs-editor-input {
+    height: 100%;
+    min-height: 0;
+    overflow-y: auto;
+    border-right: 1px solid var(--ali-docs-border);
+    border-radius: 0 0 0 var(--ali-docs-radius);
+}
+
+.ali-docs .ali-docs-editor.is-split .ali-docs-editor-preview {
+    min-height: 0;
+    overflow-y: auto;
+    background-color: #fff;
+    cursor: text;
+}
+
+/* Headings menu : each level at its size */
+.ali-docs-editor-caret {
+    font-size: .65rem;
+}
+
+.ali-docs .ali-docs-heading-menu .dropdown-item {
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+.ali-docs .ali-docs-heading-menu .dropdown-item:first-child {
+    font-weight: 400;
+}
+
+.ali-docs .ali-docs-heading-item-1 { font-size: 1.45rem; }
+.ali-docs .ali-docs-heading-item-2 { font-size: 1.25rem; }
+.ali-docs .ali-docs-heading-item-3 { font-size: 1.1rem; }
+.ali-docs .ali-docs-heading-item-4 { font-size: 1rem; }
+.ali-docs .ali-docs-heading-item-5 { font-size: .9rem; }
+
+/* Table grid : columns x rows */
+.ali-docs .ali-docs-table-picker {
+    --bs-dropdown-min-width: 0;
+    padding: .6rem;
+}
+
+.ali-docs-table-grid {
+    display: grid;
+    grid-template-columns: repeat(8, 18px);
+    gap: 3px;
+}
+
+.ali-docs-table-grid button {
+    width: 18px;
+    height: 18px;
+    padding: 0;
+    border: 1px solid var(--ali-docs-border);
+    border-radius: 3px;
+    background-color: #fff;
+}
+
+.ali-docs-table-grid button.active {
+    border-color: var(--ali-docs-accent);
+    background-color: var(--ali-docs-accent-soft);
+}
+
+.ali-docs-table-size {
+    margin-top: .4rem;
+    color: var(--ali-docs-muted);
+    font-size: .8rem;
+    text-align: center;
+}
+
+/* Link modal : pages and folders of the documentation */
+.ali-docs-link-list {
+    max-height: 45vh;
+    overflow-y: auto;
+    border: 1px solid var(--ali-docs-border);
+    border-radius: var(--ali-docs-radius-sm);
+    padding: .25rem;
+}
+
+.ali-docs-link-item {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    width: 100%;
+    padding: .35rem .75rem;
+    border: 0;
+    border-radius: var(--ali-docs-radius-sm);
+    background: transparent;
+    color: var(--ali-docs-text);
+    font-size: .9rem;
+    text-align: left;
+    transition: background-color var(--ali-docs-transition), color var(--ali-docs-transition);
+}
+
+.ali-docs-link-item i {
+    color: var(--ali-docs-muted);
+}
+
+.ali-docs-link-item:hover,
+.ali-docs-link-item.active {
+    background-color: var(--ali-docs-accent-soft);
+    color: var(--ali-docs-accent);
+}
+
+.ali-docs-link-item.active i,
+.ali-docs-link-item:hover i {
+    color: var(--ali-docs-accent);
+}
+
+.ali-docs-link-item-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Media modal : folder browsed (breadcrumb + sub-folders) */
+.ali-docs-media-nav {
+    margin-bottom: .75rem;
+}
+
+.ali-docs-media-breadcrumb {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .25rem;
+    font-size: .9rem;
+}
+
+.ali-docs-media-crumb {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    padding: .15rem .4rem;
+    border: 0;
+    border-radius: var(--ali-docs-radius-sm);
+    background: transparent;
+    color: var(--ali-docs-muted);
+}
+
+button.ali-docs-media-crumb:hover {
+    background-color: var(--ali-docs-hover);
+    color: var(--ali-docs-text);
+}
+
+.ali-docs-media-crumb.current {
+    color: var(--ali-docs-text);
+    font-weight: 600;
+}
+
+.ali-docs-media-crumb-separator {
+    color: #b8bcc4;
+    font-size: .7rem;
+}
+
+.ali-docs-media-folders {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .4rem;
+    margin-top: .5rem;
+}
+
+.ali-docs-media-folder {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    padding: .3rem .7rem;
+    border: 1px solid var(--ali-docs-border);
+    border-radius: 50rem;
+    background-color: #fff;
+    color: var(--ali-docs-text);
+    font-size: .85rem;
+    transition: border-color var(--ali-docs-transition), color var(--ali-docs-transition);
+}
+
+.ali-docs-media-folder i {
+    color: var(--ali-docs-accent);
+}
+
+.ali-docs-media-folder:hover {
+    border-color: var(--ali-docs-accent);
+    color: var(--ali-docs-accent);
+}
+
+.ali-docs-editor-body {
+    position: relative;
+}
+
+.ali-docs-editor.is-uploading .ali-docs-editor-body {
+    opacity: .6;
+    cursor: progress;
+}
+
+/* Markdown : monospace font, the height follows the content (ali_docs_editor.js) */
+.ali-docs .ali-docs-editor-input {
+    display: block;
+    width: 100%;
+    min-height: 60vh;
+    padding: 1rem 1.25rem;
+    border: 0;
+    border-radius: 0 0 var(--ali-docs-radius) var(--ali-docs-radius);
+    box-shadow: none;
+    color: var(--ali-docs-text);
+    font-family: ui-monospace, SFMono-Regular, "Cascadia Code", Menlo, Consolas, monospace;
+    font-size: .9rem;
+    line-height: 1.65;
+    tab-size: 4;
+    resize: none;
+    overflow: hidden;
+}
+
+.ali-docs .ali-docs-editor-input:focus {
+    border: 0;
+    box-shadow: none;
+}
+
+.ali-docs .ali-docs-editor-preview {
+    padding: 1.25rem 1.5rem;
+}
+
+/* Buttons */
+.ali-docs-btn {
+    border: 0;
+    white-space: nowrap;
+}
+
+.ali-docs .ali-docs-btn-light {
+    border: 1px solid var(--ali-docs-border);
+    background-color: #fff;
+    color: var(--ali-docs-text) !important;
+}
+
+.ali-docs .ali-docs-btn-light:hover {
+    background-color: var(--ali-docs-hover);
+}
+
+/* Light button with a danger text (remove the link) */
+.ali-docs .ali-docs-btn-light.ali-docs-btn-danger {
+    color: #c62828 !important;
+}
+
+.ali-docs-media-replace {
+    margin-bottom: .75rem;
+    padding: .5rem .75rem;
+    font-size: .875rem;
+}
+
+/* Delete item of the options menus */
+.ali-docs .dropdown-item.ali-docs-dropdown-danger,
+.ali-docs .dropdown-item.ali-docs-dropdown-danger i {
+    color: #c62828;
+}
+
+.ali-docs .dropdown-item.ali-docs-dropdown-danger:hover {
+    background-color: #fdeeee;
+}
+
+/* Documentation home : title + options menu */
+.ali-docs-title-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+/* --------------------------------------------------------------------------
+   Modals (new page / folder, media files)
+   -------------------------------------------------------------------------- */
+.ali-docs-modal .modal-content {
+    border: 0;
+    border-radius: var(--ali-docs-radius);
+    box-shadow: 0 20px 50px rgba(15, 23, 42, .18);
+}
+
+.ali-docs-modal .modal-header,
+.ali-docs-modal .modal-footer {
+    border-color: var(--ali-docs-border);
+}
+
+.ali-docs-modal .modal-title {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.ali-docs-modal .form-text {
+    margin-top: .75rem;
+    color: var(--ali-docs-muted);
+}
+
+/* Confirmation window (aliDocsConfirm) : own modal, or over the modal already open */
+.ali-docs-confirm-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    border-radius: var(--ali-docs-radius);
+    background-color: rgba(15, 23, 42, .35);
+    animation: aliDocsFadeIn .15s ease;
+}
+
+.ali-docs-confirm-overlay .ali-docs-confirm {
+    width: 100%;
+    max-width: 460px;
+    border-radius: var(--ali-docs-radius);
+    background-color: #fff;
+    box-shadow: 0 20px 50px rgba(15, 23, 42, .25);
+}
+
+.ali-docs-confirm .modal-header,
+.ali-docs-confirm .modal-footer {
+    border-color: var(--ali-docs-border);
+}
+
+.ali-docs-confirm-list {
+    max-height: 30vh;
+    margin: .75rem 0 0;
+    padding: .5rem .75rem .5rem 1.75rem;
+    overflow-y: auto;
+    border-radius: var(--ali-docs-radius-sm);
+    background-color: var(--ali-docs-surface);
+    font-size: .9rem;
+}
+
+.ali-docs-confirm-note {
+    margin: .75rem 0 0;
+    color: var(--ali-docs-muted);
+    font-size: .875rem;
+}
+
+/* Confirmation of a deletion : red button */
+.ali-docs .ali-docs-btn.ali-docs-btn-danger-solid {
+    background-color: #c62828;
+}
+
+.ali-docs .ali-docs-btn.ali-docs-btn-danger-solid:hover {
+    background-color: #a51f1f;
+}
+
+@keyframes aliDocsFadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Upload zone */
+.ali-docs-dropzone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .25rem;
+    padding: 1.5rem 1rem;
+    border: 2px dashed var(--ali-docs-border);
+    border-radius: var(--ali-docs-radius);
+    background-color: var(--ali-docs-surface);
+    color: var(--ali-docs-muted);
+    text-align: center;
+    cursor: pointer;
+    transition: border-color var(--ali-docs-transition), background-color var(--ali-docs-transition);
+}
+
+.ali-docs-dropzone:hover,
+.ali-docs-dropzone.is-dragover {
+    border-color: var(--ali-docs-accent);
+    background-color: var(--ali-docs-accent-soft);
+}
+
+.ali-docs-dropzone > i {
+    color: var(--ali-docs-accent);
+    font-size: 2rem;
+    line-height: 1;
+}
+
+.ali-docs-dropzone-title {
+    color: var(--ali-docs-text);
+    font-weight: 500;
+}
+
+.ali-docs-dropzone-help {
+    font-size: .8rem;
+}
+
+.ali-docs-media-progress {
+    height: 6px;
+    margin-top: .75rem;
+    --bs-progress-bar-bg: var(--ali-docs-accent);
+}
+
+.ali-docs-media-errors {
+    margin: .75rem 0 0;
+    font-size: .875rem;
+}
+
+.ali-docs-media-heading {
+    margin: 1.25rem 0 .15rem;
+    padding: 0;
+    border: 0;
+    font-size: .95rem;
+    font-weight: 600;
+}
+
+.ali-docs-media-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: .75rem;
+}
+
+.ali-docs-media-item {
+    position: relative;
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid var(--ali-docs-border);
+    border-radius: var(--ali-docs-radius-sm);
+    background-color: #fff;
+    transition: border-color var(--ali-docs-transition), box-shadow var(--ali-docs-transition), opacity var(--ali-docs-transition);
+}
+
+.ali-docs-media-item:hover,
+.ali-docs-media-item:focus-within {
+    border-color: var(--ali-docs-accent);
+    box-shadow: 0 0 0 3px var(--ali-docs-accent-soft);
+}
+
+.ali-docs-media-item.is-deleting {
+    opacity: .4;
+    pointer-events: none;
+}
+
+/* Insertion : the whole card */
+.ali-docs-media-pick {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    text-align: left;
+}
+
+/* Deletion : trash button on the thumbnail, visible on hover / focus (always on touch screens) */
+.ali-docs-media-delete {
+    position: absolute;
+    top: .35rem;
+    right: .35rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--ali-docs-radius-sm);
+    background-color: rgba(255, 255, 255, .92);
+    box-shadow: 0 1px 3px rgba(15, 23, 42, .2);
+    color: #c62828;
+    font-size: .85rem;
+    opacity: 0;
+    transition: opacity var(--ali-docs-transition), background-color var(--ali-docs-transition);
+}
+
+.ali-docs-media-item:hover .ali-docs-media-delete,
+.ali-docs-media-item:focus-within .ali-docs-media-delete {
+    opacity: 1;
+}
+
+.ali-docs-media-delete:hover {
+    background-color: #fdeeee;
+}
+
+@media (hover: none) {
+    .ali-docs-media-delete {
+        opacity: 1;
+    }
+}
+
+.ali-docs-media-thumb {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 90px;
+    background-color: var(--ali-docs-surface);
+    color: var(--ali-docs-muted);
+    font-size: 2rem;
+}
+
+.ali-docs-media-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.ali-docs-media-name {
+    padding: .35rem .5rem;
+    overflow: hidden;
+    font-size: .8rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 /* --------------------------------------------------------------------------

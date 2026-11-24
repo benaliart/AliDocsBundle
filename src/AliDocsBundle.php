@@ -29,6 +29,14 @@ class AliDocsBundle extends AbstractBundle
                     ->info('Url prefix of the edit pages.')
                     ->defaultValue('admin_documentation')
                 ->end()
+                ->scalarNode('upload_max_size')
+                    ->info('Maximum size of a media file sent from the editor (ex : "64M", "500K"). The PHP limits (upload_max_filesize, post_max_size) also apply.')
+                    ->defaultValue('64M')
+                    ->validate()
+                        ->ifTrue(static fn ($value): bool => !preg_match('/^\d+\s*[KMG]?$/i', (string) $value))
+                        ->thenInvalid('Invalid size %s : use a number of bytes, or a number followed by K, M or G (ex : "64M").')
+                    ->end()
+                ->end()
                 ->arrayNode('layout')
                     ->info('The documentation pages have their own layout, independent of the application. These options connect them to the application.')
                     ->addDefaultsIfNotSet()
@@ -62,12 +70,14 @@ class AliDocsBundle extends AbstractBundle
                     ->end()
                 ->end()
                 ->arrayNode('documentations')
-                    ->info('One entry per documentation. The key is used in the urls, with "-" instead of "_" (ex : doc_public => /doc-public).')
+                    ->info('One entry per documentation. The key is the url of the documentation (ex : doc-public => /doc-public) : letters, numbers, "-" and "_".')
+                    // The key is the url : kept as written (Symfony would replace the "-" by "_")
+                    ->normalizeKeys(false)
                     ->defaultValue([])
                     ->arrayPrototype()
                         ->children()
                             ->scalarNode('doc_dir')
-                                ->info('Folder of the documentation files (ex : "%kernel.project_dir%/doc_public").')
+                                ->info('Folder of the documentation files (ex : "%kernel.project_dir%/doc-public").')
                                 ->isRequired()
                                 ->cannotBeEmpty()
                             ->end()
@@ -106,28 +116,37 @@ class AliDocsBundle extends AbstractBundle
 
         $container->parameters()
             ->set('ali_docs.admin_path', $config['admin_path'])
+            ->set('ali_docs.upload_max_size', $this->toBytes((string) $config['upload_max_size']))
             ->set('ali_docs.layout', $config['layout'])
             ->set('ali_docs.documentations', $this->resolveSwitchDocs($config['documentations']))
         ;
     }
 
     /**
-     * switch_doc of each documentation : list of the other documentation keys
-     * - "*" : all the other documentations (in the configuration order)
-     * - the keys are checked (unknown key : configuration error) and the current documentation is removed
+     * Keys of the documentations (used in the urls) and switch_doc of each documentation
+     * - key : letters, numbers, "-" and "_", starting with a letter or a number
+     * - switch_doc : keys of the other documentations, or "*" for all the other ones (in the configuration order).
+     *   Unknown key : configuration error. The current documentation is removed
      *
      * @param array<string, array<string, mixed>> $documentations
      * @return array<string, array<string, mixed>>
      */
     private function resolveSwitchDocs(array $documentations): array
     {
-        // Keys of the configuration : "-" are normalized to "_"
-        $normalize = static fn (string $key): string => str_replace('-', '_', $key);
-        $allKeys = array_map($normalize, array_keys($documentations));
+        $allKeys = array_map('strval', array_keys($documentations));
+
+        foreach ($allKeys as $key) {
+            if (!preg_match('/^[A-Za-z0-9][A-Za-z0-9_-]*$/', $key)) {
+                throw new InvalidConfigurationException(sprintf(
+                    'Invalid documentation key "%s" in "ali_docs.documentations": the key is the url of the documentation, use letters, numbers, "-" and "_" (ex: "doc-public").',
+                    $key
+                ));
+            }
+        }
 
         foreach ($documentations as $key => $documentation) {
-            $key = $normalize($key);
-            $switchDocs = array_map($normalize, $documentation['switch_doc'] ?? []);
+            $key = (string) $key;
+            $switchDocs = array_map('strval', $documentation['switch_doc'] ?? []);
 
             if (\in_array('*', $switchDocs, true)) {
                 $switchDocs = $allKeys;
@@ -148,6 +167,18 @@ class AliDocsBundle extends AbstractBundle
         }
 
         return $documentations;
+    }
+
+    /**
+     * Size of the configuration (ex : "64M") => number of bytes
+     */
+    private function toBytes(string $size): int
+    {
+        $size = strtoupper(trim($size));
+        $units = ['K' => 1024, 'M' => 1024 ** 2, 'G' => 1024 ** 3];
+        $unit = substr($size, -1);
+
+        return isset($units[$unit]) ? (int) rtrim(substr($size, 0, -1)) * $units[$unit] : (int) $size;
     }
 
     /**

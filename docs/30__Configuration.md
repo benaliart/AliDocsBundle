@@ -6,24 +6,56 @@ Full reference: `php bin/console config:dump-reference ali_docs`
 
 ## Example
 
+Example with all the options. Only `documentations` and the `doc_dir` of each documentation are required.
+
 ```yaml
 ali_docs:
+    # URL prefix of the edit pages
     admin_path: '/admin_documentation'
+    # Maximum size of a media file sent from the editor
+    upload_max_size: '64M'
+
+    # Connection with the application : link back, favicon, logo, styles and scripts
+    layout:
+        home_url: '/'
+        home_label: 'My application'
+        favicon: '/favicon.ico'
+        logo: '/images/logo.svg'
+        extra_css: ['/css/docs.css']
+        extra_js: []
 
     documentations:
-        doc_public:
-            doc_dir: '%kernel.project_dir%/doc_public'
+        doc-public:
+            doc_dir: '%kernel.project_dir%/doc-public'
             title: Public documentation
             view_security: PUBLIC_ACCESS
             edit_security: ROLE_ADMIN
-            switch_doc: [doc_admin]
-        doc_admin:
-            doc_dir: '%kernel.project_dir%/doc_admin'
+            switch_doc: ['*']
+        doc-admin:
+            doc_dir: '%kernel.project_dir%/doc-admin'
             title: Admin documentation
             view_security: ROLE_ADMIN
             edit_security: ROLE_ADMIN
-            switch_doc: [doc_public]
+            switch_doc: ['*']
 ```
+
+## All the options
+
+| Option | Default | Description |
+|---|---|---|
+| [`admin_path`](#admin_path) | `admin_documentation` | URL prefix of the edit pages. |
+| [`upload_max_size`](#upload_max_size) | `64M` | Maximum size of a media file sent from the editor. |
+| [`layout.home_url`](#layout) | `null` | Link back to the application, in the header. |
+| [`layout.home_label`](#layout) | `null` | Text of the link back to the application. |
+| [`layout.favicon`](#layout) | `null` | Favicon of the pages. |
+| [`layout.logo`](#layout) | `null` | Logo of the application in the header. |
+| [`layout.extra_css`](#layout) | `[]` | Stylesheets of the application added to the pages. |
+| [`layout.extra_js`](#layout) | `[]` | Scripts of the application added to the pages. |
+| [`documentations.<key>.doc_dir`](#documentations) | required | Folder of the documentation files. |
+| [`documentations.<key>.title`](#documentations) | `My Documentation` | Title displayed in the header. |
+| [`documentations.<key>.view_security`](#documentations) | empty (public) | Role required to read the documentation. |
+| [`documentations.<key>.edit_security`](#documentations) | `ROLE_ADMIN` | Role required to edit the pages. |
+| [`documentations.<key>.switch_doc`](#switch_doc) | `[]` | Documentations of the "Go to documentation" menu. |
 
 ## Options
 
@@ -31,9 +63,15 @@ ali_docs:
 
 URL prefix of the edit pages. Default: `admin_documentation`.
 
+### `upload_max_size`
+
+Maximum size of a media file sent from the editor (images, videos, PDF). Default: `64M`. A number of bytes, or a number followed by `K`, `M` or `G`.
+
+The PHP limits also apply: `upload_max_filesize` and `post_max_size` (`php.ini`) must be at least as large to send big videos.
+
 ### `documentations`
 
-The list of the documentations. The key of each entry (for example `doc_public`) is used in the URLs, with `-` instead of `_`: `/doc-public`.
+The list of the documentations. The key of each entry is the URL of the documentation, as written: `doc-public` => `/doc-public`. It can contain letters, numbers, `-` and `_`, and starts with a letter or a number. Write the keys the same way in `switch_doc`.
 
 | Option | Required | Default | Description |
 |---|---|---|---|
@@ -47,7 +85,7 @@ The roles are checked by the Symfony security component: the application needs a
 
 ### `switch_doc`
 
-- `[doc_admin, doc_v2]`: the listed documentations.
+- `[doc-admin, doc-v2]`: the listed documentations.
 - `['*']`: all the other documentations, in the order of the configuration.
 - The current documentation is never listed.
 - A documentation is listed only if the user can read it (`view_security`). If no documentation is left, the menu is not displayed.
@@ -99,6 +137,9 @@ Routes of a documentation:
 | `ali_docs_search` | `/{doc_key}/search?s=...` |
 | `ali_docs_asset` | `/{doc_key}/assets/{path}` |
 | `ali_docs_admin_edit` | `/{admin_path}/{doc_key}/{path}` |
+| `ali_docs_admin_create`, `ali_docs_admin_delete`, `ali_docs_admin_preview` | `/{admin_path}/_actions/{doc_key}/...` (POST) |
+| `ali_docs_admin_media_list`, `ali_docs_admin_media_upload` | `/{admin_path}/_actions/{doc_key}/media` |
+| `ali_docs_admin_pages` | `/{admin_path}/_actions/{doc_key}/pages` (GET) |
 
 ## One documentation per version
 
@@ -114,15 +155,15 @@ docs/
 ```yaml
 ali_docs:
     documentations:
-        v3_0:
+        v3-0:
             doc_dir: '%kernel.project_dir%/docs/v3.0'
             title: Documentation v3.0
             switch_doc: ['*']
-        v2_0:
+        v2-0:
             doc_dir: '%kernel.project_dir%/docs/v2.0'
             title: Documentation v2.0
             switch_doc: ['*']
-        v1_0:
+        v1-0:
             doc_dir: '%kernel.project_dir%/docs/v1.0'
             title: Documentation v1.0
             switch_doc: ['*']

@@ -50,10 +50,10 @@ This copies the CSS and JavaScript files of the bundle to `public/bundles/alidoc
 
 ## Step 4: Create a documentation
 
-Create the folder declared in `config/packages/ali_docs.yaml` (for example `doc_public/`) and add a first Markdown file:
+Create the folder declared in `config/packages/ali_docs.yaml` (for example `doc-public/`) and add a first Markdown file:
 
 ```text
-doc_public/
+doc-public/
 └── 10__Introduction.md
 ```
 

@@ -9,6 +9,15 @@
 
 	<div class="ali-docs-page-header">
 		{{ include('@AliDocs/documentation/_breadcrumb.html.twig', { folders: breadcrumb, current: folder.getName() }) }}
+
+		{% if is_granted(edit_security) %}
+			{# Only an empty folder can be deleted #}
+			{{ include('@AliDocs/documentation/_admin_menu.html.twig', {
+				delete_path: folder_empty ? folder.getUrl() : null,
+				delete_type: 'folder',
+				delete_name: folder.getName(),
+			}) }}
+		{% endif %}
 	</div>
 
 	<h1 class="ali-docs-title">{{ folder.getName() }}</h1>

@@ -30,8 +30,8 @@ ali_docs:
         favicon: '/favicon.ico'
         extra_css: ['/css/docs.css']  # ex: colors
     documentations:
-        user_guide:
-            doc_dir: '%kernel.project_dir%/docs/user_guide'
+        user-guide:
+            doc_dir: '%kernel.project_dir%/docs/user-guide'
             title: User guide
             view_security: ROLE_USER
             edit_security: ROLE_ADMIN
@@ -51,10 +51,11 @@ All the options: [Configuration](docs/30__Configuration.md).
 
 ## Documentation
 
-- [Introduction](docs/10__Introduction.md): features and roadmap
+- [Introduction](docs/10__Introduction.md): features
 - [Installation](docs/20__Install.md)
 - [Configuration](docs/30__Configuration.md)
-- [Writing a documentation](docs/40__Writing.md): files, order, Markdown, media
+- [Writing a documentation](docs/40__Writing.md): files, order, Markdown, media, editor
+- [Changelog](CHANGELOG.md): changes of each version, upgrade notes
 
 ## License
 

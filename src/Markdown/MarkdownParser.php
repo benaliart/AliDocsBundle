@@ -64,7 +64,23 @@ class MarkdownParser
             $html = str_replace(['<p>' . $token . '</p>', $token], $box, $html);
         }
 
+        // 5. Task lists (- [ ] / - [x]) : checkboxes, added after the cleaning (no form element allowed in the pages)
+        $html = $this->addTaskListCheckboxes($html);
+
         return $this->addHeadingIds($html);
+    }
+
+    /**
+     * Task lists, as on GitHub : "- [ ] text" / "- [x] text" => list item with a checkbox
+     * The checkboxes can be checked by the reader (check list), nothing is saved
+     */
+    private function addTaskListCheckboxes(string $html): string
+    {
+        return preg_replace_callback('#<li>(\s*<p>)?\s*\[([ xX])\][ \t]+#u', static function (array $matches): string {
+            $checked = ' ' !== $matches[2] ? ' checked' : '';
+
+            return '<li class="ali-docs-task">' . $matches[1] . '<input type="checkbox" class="ali-docs-task-checkbox"' . $checked . '> ';
+        }, $html);
     }
 
     /**

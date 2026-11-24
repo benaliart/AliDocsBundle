@@ -20,7 +20,7 @@
 			<link rel="stylesheet" href="{{ asset('bundles/alidocs/css/bootstrap5.3.3.min.css') }}" data-turbo-track="reload">
 			<link rel="stylesheet" href="{{ asset('bundles/alidocs/css/boostrap-icons.min.css') }}" data-turbo-track="reload">
 			<link rel="stylesheet" href="{{ asset('bundles/alidocs/css/github-markdown-light.css') }}" data-turbo-track="reload">
-			<link rel="stylesheet" href="{{ asset('bundles/alidocs/css/ali_docs.css') }}" data-turbo-track="reload">
+			<link rel="stylesheet" href="{{ asset('bundles/alidocs/css/ali_docs.css') }}?v={{ ali_docs.assets_version }}" data-turbo-track="reload">
 			{% for css in ali_docs.layout.extra_css %}
 				<link rel="stylesheet" href="{{ asset(css) }}" data-turbo-track="reload">
 			{% endfor %}
@@ -31,7 +31,7 @@
 			<meta name="turbo-refresh-method" content="morph">
 			<script type="module" src="{{ asset('bundles/alidocs/js/turbo.es2017-esm.min.js') }}" data-turbo-track="reload"></script>
 			<script src="{{ asset('bundles/alidocs/js/bootstrap.bundle.5.3.3.min.js') }}" data-turbo-track="reload"></script>
-			<script src="{{ asset('bundles/alidocs/js/ali_docs.js') }}" data-turbo-track="reload"></script>
+			<script src="{{ asset('bundles/alidocs/js/ali_docs.js') }}?v={{ ali_docs.assets_version }}" data-turbo-track="reload"></script>
 			{% for js in ali_docs.layout.extra_js %}
 				<script src="{{ asset(js) }}" defer data-turbo-track="reload"></script>
 			{% endfor %}
@@ -111,6 +111,30 @@
 						</div>
 					</main>
 				{% endblock main %}
+
+				{# Confirmation window (ali_docs.js : aliDocsConfirm), instead of the browser confirm / alert #}
+				<template id="ali-docs-confirm-template">
+					<div class="ali-docs-confirm">
+						<div class="modal-header">
+							<h2 class="modal-title" data-confirm-title>{{ 'Confirmation' | trans({}, 'ali_docs') }}</h2>
+							<button type="button" class="btn-close" data-confirm-cancel aria-label="{{ 'Close' | trans({}, 'ali_docs') }}"></button>
+						</div>
+						<div class="modal-body">
+							<p class="mb-0" data-confirm-message></p>
+							<ul class="ali-docs-confirm-list" data-confirm-list hidden></ul>
+							<p class="ali-docs-confirm-note" data-confirm-note hidden></p>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="ali-docs-btn ali-docs-btn-light" data-confirm-cancel>{{ 'Cancel' | trans({}, 'ali_docs') }}</button>
+							<button type="button" class="ali-docs-btn" data-confirm-ok data-label-confirm="{{ 'Confirm' | trans({}, 'ali_docs') }}" data-label-ok="{{ 'OK' | trans({}, 'ali_docs') }}"></button>
+						</div>
+					</div>
+				</template>
+				<div class="modal fade ali-docs-modal" id="ali-docs-confirm-modal" tabindex="-1" aria-hidden="true">
+					<div class="modal-dialog modal-dialog-centered">
+						<div class="modal-content"></div>
+					</div>
+				</div>
 
 				{% block messages %}
 					{% include "@AliDocs/default/_flash_messages.html.twig" %}

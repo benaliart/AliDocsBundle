@@ -1,60 +1,308 @@
 {% extends '@AliDocs/base.html.twig' %}
 
+{# Independent of the form theme of the application #}
+{% form_theme form 'bootstrap_5_layout.html.twig' %}
 
 {% block javascripts %}
 	{{ parent() }}
+	{# The edit page is always loaded as a full page : editor script, warning on unsaved changes #}
 	<meta name="turbo-visit-control" content="reload">
-	<script src="{{ asset('/bundles/alidocs/js/wysimark.1.0.0.index.cjs.js') }}"></script>
+	<script src="{{ asset('bundles/alidocs/js/ali_docs_editor.js') }}?v={{ ali_docs.assets_version }}" defer></script>
 {% endblock %}
 
 {% block title %}
-	{{ path }}
+	{{ title }} | {{ doc_title }}
 {% endblock %}
 
+{# Wider page : Markdown and preview side by side #}
+{% block container_class %}ali-docs-container-wide{% endblock %}
 
 {% block content %}
 
+	{% set token = csrf_token('ali_docs_edit') %}
 
-	{{ form_start(form, { 'attr' : {'id' : 'edit_form'}}) }}
-	<div class="row">
-		<div class="col-12 col-md-10 pb-5">
+	{# Simple toolbar buttons : action (ali_docs_editor.js), icon, label #}
+	{% set tool = {
+		bold: { icon: 'bi-type-bold', label: 'Bold' | trans({}, 'ali_docs') ~ ' (Ctrl + B)' },
+		italic: { icon: 'bi-type-italic', label: 'Italic' | trans({}, 'ali_docs') ~ ' (Ctrl + I)' },
+		ul: { icon: 'bi-list-ul', label: 'Bulleted list' | trans({}, 'ali_docs') },
+		ol: { icon: 'bi-list-ol', label: 'Numbered list' | trans({}, 'ali_docs') },
+		task: { icon: 'bi-check2-square', label: 'Task list' | trans({}, 'ali_docs') },
+		quote: { icon: 'bi-quote', label: 'Quote' | trans({}, 'ali_docs') },
+		link: { icon: 'bi-link-45deg', label: 'Link' | trans({}, 'ali_docs') ~ ' (Ctrl + K)' },
+		code: { icon: 'bi-code', label: 'Code' | trans({}, 'ali_docs') },
+		codeblock: { icon: 'bi-code-square', label: 'Code block' | trans({}, 'ali_docs') },
+	} %}
+	{% set boxes = {
+		tip: { icon: 'bi-lightbulb', label: 'Tip box' | trans({}, 'ali_docs') },
+		info: { icon: 'bi-info-circle', label: 'Info box' | trans({}, 'ali_docs') },
+		warning: { icon: 'bi-exclamation-triangle', label: 'Warning box' | trans({}, 'ali_docs') },
+		danger: { icon: 'bi-x-octagon', label: 'Danger box' | trans({}, 'ali_docs') },
+	} %}
 
-			<div class="row">
-				<div class="col-3 pb-3">
-					{{ form_row(form.position) }}
-				</div>
-				<div class="col-4 pb-3">
-					{{ form_row(form.title) }}
-				</div>
+	{# Texts of the editor script #}
+	{% set i18n = {
+		text: 'text' | trans({}, 'ali_docs'),
+		column: 'Column' | trans({}, 'ali_docs'),
+		cell: 'Cell' | trans({}, 'ali_docs'),
+		table: 'Table' | trans({}, 'ali_docs'),
+		loading: 'Loading…' | trans({}, 'ali_docs'),
+		emptyPreview: 'Nothing to preview.' | trans({}, 'ali_docs'),
+		previewError: 'The preview could not be loaded.' | trans({}, 'ali_docs'),
+		unsaved: 'The changes are not saved. Leave the page?' | trans({}, 'ali_docs'),
+		uploadError: 'The files could not be sent.' | trans({}, 'ali_docs'),
+		noMedia: 'No media files in this folder yet.' | trans({}, 'ali_docs'),
+		noPages: 'No page found.' | trans({}, 'ali_docs'),
+		tableLoss: 'Cells with content will be deleted. Continue?' | trans({}, 'ali_docs'),
+		resizeTable: 'Table size' | trans({}, 'ali_docs'),
+		replaceMedia: 'The file chosen replaces %name%.' | trans({}, 'ali_docs'),
+		deleteFile: 'Delete the file' | trans({}, 'ali_docs'),
+		deleteMedia: 'Delete the file "%name%"?' | trans({}, 'ali_docs'),
+		mediaUsed: '"%name%" is used in these pages:' | trans({}, 'ali_docs'),
+		mediaUsedNote: 'The images and links of these pages will not work anymore.' | trans({}, 'ali_docs'),
+		delete: 'Delete' | trans({}, 'ali_docs'),
+		deleteAnyway: 'Delete anyway' | trans({}, 'ali_docs'),
+		resize: 'Resize' | trans({}, 'ali_docs'),
+		leave: 'Leave the page' | trans({}, 'ali_docs'),
+		deleteError: 'The file could not be deleted.' | trans({}, 'ali_docs'),
+		root: doc_title,
+	} %}
+
+	{% macro tool_button(action, tool) %}
+		<button type="button" class="ali-docs-editor-tool" data-md-action="{{ action }}" title="{{ tool.label }}" aria-label="{{ tool.label }}">
+			<i class="bi {{ tool.icon }}"></i>
+		</button>
+	{% endmacro %}
+
+	<div class="ali-docs-page-header">
+		{{ include('@AliDocs/documentation/_breadcrumb.html.twig', { folders: breadcrumb, current: title }) }}
+
+		<div class="ali-docs-editor-actions">
+			<a href="{{ path('ali_docs_show', { 'doc_key': doc_key, 'path': path }) }}" class="ali-docs-btn ali-docs-btn-light" data-turbo-frame="_top">
+				<i class="bi bi-box-arrow-up-right"></i>
+				<span class="d-none d-sm-inline">{{ 'Back to the view' | trans({}, 'ali_docs') }}</span>
+			</a>
+			<button type="submit" form="edit_form" class="ali-docs-btn">
+				<i class="bi bi-check2"></i>
+				{{- 'Save changes' | trans({}, 'ali_docs') -}}
+			</button>
+			<div class="dropdown">
+				<button type="button" class="ali-docs-icon-btn" data-bs-toggle="dropdown" aria-expanded="false" aria-label="{{ 'Page options' | trans({}, 'ali_docs') }}">
+					<i class="bi bi-three-dots"></i>
+				</button>
+				<ul class="dropdown-menu dropdown-menu-end shadow-sm">
+					<li>
+						<form method="post" action="{{ path('ali_docs_admin_delete', { 'doc_key': doc_key }) }}" data-turbo="false"
+							data-ali-docs-confirm="{{ 'Delete the page "%name%"?' | trans({ '%name%': title }, 'ali_docs') }}"
+							data-ali-docs-confirm-label="{{ 'Delete' | trans({}, 'ali_docs') }}">
+							<input type="hidden" name="_token" value="{{ token }}">
+							<input type="hidden" name="path" value="{{ path }}">
+							<button type="submit" class="dropdown-item ali-docs-dropdown-danger">
+								<i class="bi bi-trash3"></i>
+								{{- 'Delete the page' | trans({}, 'ali_docs') -}}
+							</button>
+						</form>
+					</li>
+				</ul>
 			</div>
-
-
-			{{ form_row(form.content) }}
-			<div id="editor-container"></div>
-
 		</div>
-		<div class="col-2 ">
-			<div class="sticky-top">
-				<button type="submit" class="btn btn-primary mt-3">{{ 'Save changes' | trans({}, 'ali_docs') }}</button>
-				<a href="{{ path('ali_docs_show', { 'doc_key' : doc_key, 'path' : path })}}" class="btn btn-secondary mt-3" data-turbo-action="replace" data-turbo-frame="content" data-turbo-stream="menu">{{ 'Back to the view' | trans({}, 'ali_docs') }}</a>
-			</div>
-		</div>
-
-
 	</div>
+
+	{{ form_start(form, { 'attr': { 'id': 'edit_form', 'class': 'ali-docs-editor-form', 'data-turbo': 'false' } }) }}
+
+		{{ form_errors(form) }}
+
+		<div class="ali-docs-editor-meta">
+			<div class="ali-docs-editor-position">{{ form_row(form.position) }}</div>
+			<div class="ali-docs-editor-name">{{ form_row(form.title) }}</div>
+		</div>
+
+		<div class="ali-docs-editor"
+			data-ali-docs-editor
+			data-path="{{ path }}"
+			data-token="{{ token }}"
+			data-preview-url="{{ path('ali_docs_admin_preview', { 'doc_key': doc_key }) }}"
+			data-media-list-url="{{ path('ali_docs_admin_media_list', { 'doc_key': doc_key }) }}"
+			data-media-upload-url="{{ path('ali_docs_admin_media_upload', { 'doc_key': doc_key }) }}"
+			data-media-delete-url="{{ path('ali_docs_admin_media_delete', { 'doc_key': doc_key }) }}"
+			data-pages-url="{{ path('ali_docs_admin_pages', { 'doc_key': doc_key, 'path': path }) }}"
+			data-i18n="{{ i18n | json_encode }}">
+
+			<div class="ali-docs-editor-bar">
+				{# Display : Markdown and preview side by side (large screens), Markdown only, preview only #}
+				<div class="ali-docs-editor-tabs" role="group" aria-label="{{ 'Display' | trans({}, 'ali_docs') }}">
+					<button type="button" class="ali-docs-editor-tab ali-docs-editor-tab-split" data-editor-mode="split" aria-pressed="false">
+						<i class="bi bi-layout-split"></i>
+						{{- 'Write / Preview' | trans({}, 'ali_docs') -}}
+					</button>
+					<button type="button" class="ali-docs-editor-tab active" data-editor-mode="write" aria-pressed="true">
+						<i class="bi bi-pencil"></i>
+						{{- 'Write' | trans({}, 'ali_docs') -}}
+					</button>
+					<button type="button" class="ali-docs-editor-tab" data-editor-mode="preview" aria-pressed="false">
+						<i class="bi bi-eye"></i>
+						{{- 'Preview' | trans({}, 'ali_docs') -}}
+					</button>
+				</div>
+
+				<div class="ali-docs-editor-tools" role="toolbar" aria-label="{{ 'Formatting' | trans({}, 'ali_docs') }}">
+					<div class="ali-docs-editor-group">
+						{{ _self.tool_button('bold', tool.bold) }}
+						{{ _self.tool_button('italic', tool.italic) }}
+					</div>
+
+					{# Headings : paragraph, h1 to h5 #}
+					<div class="ali-docs-editor-group dropdown">
+						<button type="button" class="ali-docs-editor-tool ali-docs-editor-tool-text" data-bs-toggle="dropdown" aria-expanded="false" title="{{ 'Headings' | trans({}, 'ali_docs') }}">
+							<i class="bi bi-type-h1"></i>
+							<i class="bi bi-chevron-down ali-docs-editor-caret"></i>
+						</button>
+						<ul class="dropdown-menu ali-docs-heading-menu">
+							<li>
+								<button type="button" class="dropdown-item" data-md-action="heading-0">{{ 'Paragraph' | trans({}, 'ali_docs') }}</button>
+							</li>
+							{% for level in 1..5 %}
+								<li>
+									<button type="button" class="dropdown-item ali-docs-heading-item-{{ level }}" data-md-action="heading-{{ level }}">
+										{{- 'Heading %level%' | trans({ '%level%': level }, 'ali_docs') -}}
+									</button>
+								</li>
+							{% endfor %}
+						</ul>
+					</div>
+
+					<div class="ali-docs-editor-group">
+						{{ _self.tool_button('ul', tool.ul) }}
+						{{ _self.tool_button('ol', tool.ol) }}
+						{{ _self.tool_button('task', tool.task) }}
+						{{ _self.tool_button('quote', tool.quote) }}
+					</div>
+
+					<div class="ali-docs-editor-group">
+						{{ _self.tool_button('link', tool.link) }}
+						{{ _self.tool_button('code', tool.code) }}
+						{{ _self.tool_button('codeblock', tool.codeblock) }}
+
+						{# Table : size chosen on a grid (columns x rows, header row included) #}
+						<div class="dropdown">
+							<button type="button" class="ali-docs-editor-tool" data-bs-toggle="dropdown" aria-expanded="false" title="{{ 'Table' | trans({}, 'ali_docs') }}" aria-label="{{ 'Table' | trans({}, 'ali_docs') }}">
+								<i class="bi bi-table"></i>
+							</button>
+							<div class="dropdown-menu ali-docs-table-picker" data-table-picker>
+								<div class="ali-docs-table-grid">
+									{% for row in 1..8 %}
+										{% for col in 1..8 %}
+											<button type="button" data-cols="{{ col }}" data-rows="{{ row }}" aria-label="{{ col }} × {{ row }}"></button>
+										{% endfor %}
+									{% endfor %}
+								</div>
+								<div class="ali-docs-table-size" data-table-size>{{ 'Table' | trans({}, 'ali_docs') }}</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="ali-docs-editor-group">
+						{% for type, box in boxes %}
+							<button type="button" class="ali-docs-editor-tool ali-docs-callout-{{ type }}" data-md-action="box-{{ type }}" title="{{ box.label }}" aria-label="{{ box.label }}">
+								<i class="bi {{ box.icon }}"></i>
+							</button>
+						{% endfor %}
+					</div>
+
+					<div class="ali-docs-editor-group">
+						<button type="button" class="ali-docs-editor-tool ali-docs-editor-tool-text" data-bs-toggle="modal" data-bs-target="#ali-docs-media-modal" title="{{ 'Images, videos and files' | trans({}, 'ali_docs') }}">
+							<i class="bi bi-image"></i>
+							<span>{{ 'Media' | trans({}, 'ali_docs') }}</span>
+						</button>
+					</div>
+				</div>
+			</div>
+
+			<div class="ali-docs-editor-body">
+				{{ form_widget(form.content) }}
+				<article class="markdown-body ali-docs-editor-preview" hidden title="{{ 'Click a text to place the cursor in the Markdown' | trans({}, 'ali_docs') }}"></article>
+			</div>
+		</div>
+
+		{{ form_errors(form.content) }}
+
 	{{ form_end(form) }}
 
+	{# Link : address typed, or page / folder of the documentation (link relative to the page) #}
+	<div class="modal fade ali-docs-modal" id="ali-docs-link-modal" tabindex="-1" aria-labelledby="ali-docs-link-title" aria-hidden="true">
+		<div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+			<form class="modal-content" data-link-form>
+				<div class="modal-header">
+					<h2 class="modal-title" id="ali-docs-link-title" data-title-new="{{ 'Insert a link' | trans({}, 'ali_docs') }}" data-title-edit="{{ 'Edit the link' | trans({}, 'ali_docs') }}">{{ 'Insert a link' | trans({}, 'ali_docs') }}</h2>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ 'Close' | trans({}, 'ali_docs') }}"></button>
+				</div>
+				<div class="modal-body">
+					<div class="row g-3">
+						<div class="col-md-5">
+							<label class="form-label" for="ali-docs-link-text">{{ 'Link text' | trans({}, 'ali_docs') }}</label>
+							<input class="form-control" type="text" id="ali-docs-link-text" data-link-text autocomplete="off">
+						</div>
+						<div class="col-md-7">
+							<label class="form-label" for="ali-docs-link-url">{{ 'Address' | trans({}, 'ali_docs') }}</label>
+							<input class="form-control" type="text" id="ali-docs-link-url" data-link-url placeholder="https://…" autocomplete="off">
+						</div>
+					</div>
 
-	<script>
-		const container = document.getElementById("editor-container")
-const textarea = document.getElementById("markdown_editor_content")
-// createWysimark is available on window now
-const wysimark = createWysimark(container, {
-initialMarkdown: textarea.value,
-onChange: (markdown) => {
-textarea.value = markdown
-}
-})
-	</script>
+					<h3 class="ali-docs-media-heading">{{ 'Or a page of the documentation' | trans({}, 'ali_docs') }}</h3>
+					<input class="form-control form-control-sm mb-2" type="search" data-link-search placeholder="{{ 'Search a page or a folder' | trans({}, 'ali_docs') }}" aria-label="{{ 'Search a page or a folder' | trans({}, 'ali_docs') }}">
+					<div class="ali-docs-link-list" data-link-list></div>
+				</div>
+				<div class="modal-footer">
+					{# Cursor in a link : the link can be removed (its text is kept) #}
+					<button type="button" class="ali-docs-btn ali-docs-btn-light ali-docs-btn-danger me-auto" data-link-remove hidden>
+						<i class="bi bi-link-45deg"></i>
+						{{- 'Remove the link' | trans({}, 'ali_docs') -}}
+					</button>
+					<button type="button" class="ali-docs-btn ali-docs-btn-light" data-bs-dismiss="modal">{{ 'Cancel' | trans({}, 'ali_docs') }}</button>
+					<button type="submit" class="ali-docs-btn" data-link-submit data-label-new="{{ 'Insert' | trans({}, 'ali_docs') }}" data-label-edit="{{ 'Update' | trans({}, 'ali_docs') }}" disabled>{{ 'Insert' | trans({}, 'ali_docs') }}</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	{# Media files of the "assets" folders : navigation between the folders, upload, insertion in the page #}
+	<div class="modal fade ali-docs-modal" id="ali-docs-media-modal" tabindex="-1" aria-labelledby="ali-docs-media-title" aria-hidden="true">
+		<div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h2 class="modal-title" id="ali-docs-media-title">{{ 'Images, videos and files' | trans({}, 'ali_docs') }}</h2>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ 'Close' | trans({}, 'ali_docs') }}"></button>
+				</div>
+				<div class="modal-body">
+					{# Cursor on an image / a video / a file link : the file chosen replaces it #}
+					<div class="alert alert-info ali-docs-media-replace" hidden data-media-replace></div>
+
+					{# Folder browsed : breadcrumb + sub-folders #}
+					<nav class="ali-docs-media-nav" aria-label="{{ 'Folders' | trans({}, 'ali_docs') }}">
+						<div class="ali-docs-media-breadcrumb" data-media-breadcrumb></div>
+						<div class="ali-docs-media-folders" data-media-folders></div>
+					</nav>
+
+					<label class="ali-docs-dropzone" data-media-dropzone>
+						<input type="file" multiple accept="{{ media_extensions | map(ext => '.' ~ ext) | join(',') }}" class="visually-hidden" data-media-input>
+						<i class="bi bi-cloud-arrow-up"></i>
+						<span class="ali-docs-dropzone-title">{{ 'Drop files here or click to choose them' | trans({}, 'ali_docs') }}</span>
+						<span class="ali-docs-dropzone-help">
+							{{- 'Sent to the folder' | trans({}, 'ali_docs') }} <strong data-media-target></strong> · {{ media_extensions | join(', ') }} · {{ 'max %size%' | trans({ '%size%': upload_max_size }, 'ali_docs') -}}
+						</span>
+					</label>
+
+					<div class="progress ali-docs-media-progress" role="progressbar" aria-label="{{ 'Upload' | trans({}, 'ali_docs') }}" hidden data-media-progress>
+						<div class="progress-bar" style="width: 0%"></div>
+					</div>
+					<div class="alert alert-danger ali-docs-media-errors" hidden data-media-errors></div>
+
+					<h3 class="ali-docs-media-heading">{{ 'Files of the folder' | trans({}, 'ali_docs') }}</h3>
+					<p class="ali-docs-muted small">{{ 'Click a file to insert it in the page.' | trans({}, 'ali_docs') }} {{ 'Trash icon : delete the file.' | trans({}, 'ali_docs') }}</p>
+					<div class="ali-docs-media-list" data-media-list></div>
+				</div>
+			</div>
+		</div>
+	</div>
 
 {% endblock %}

@@ -25,7 +25,22 @@ class AliDocsExtension extends AbstractExtension implements GlobalsInterface
         return [
             'ali_docs' => [
                 'layout' => $this->layout,
+                'assets_version' => $this->getAssetsVersion(),
             ],
         ];
+    }
+
+    /**
+     * Version of the bundle styles and scripts (?v=...) : changes with the files,
+     * so the browsers load the new files after an update of the bundle
+     */
+    private function getAssetsVersion(): string
+    {
+        $times = '';
+        foreach (['css/ali_docs.css', 'js/ali_docs.js', 'js/ali_docs_editor.js'] as $file) {
+            $times .= @filemtime(__DIR__ . '/../../public/' . $file) . '-';
+        }
+
+        return substr(md5($times), 0, 8);
     }
 }

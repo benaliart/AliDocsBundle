@@ -18,6 +18,13 @@ use Symfony\Component\Validator\Constraints\Regex;
  */
 class MarkdownEditorType extends AbstractType
 {
+    /**
+     * Names of the pages and folders (used as file names) : letters (accents included), numbers, spaces, underscores and dashes
+     */
+    public const NAME_PATTERN = '/^[\p{L}\p{N} _-]+$/u';
+    public const NAME_MAX_LENGTH = 100;
+    public const CONTENT_MAX_LENGTH = 50000;
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -34,27 +41,32 @@ class MarkdownEditorType extends AbstractType
                 'required' => true,
                 'attr' => [
                     'placeholder' => 'Page title',
-                    'maxlength' => 100,
+                    'maxlength' => self::NAME_MAX_LENGTH,
                 ],
                 'constraints' => [
                     new NotBlank(),
-                    new Length(max: 100),
+                    new Length(max: self::NAME_MAX_LENGTH),
                     // Used as file name : letters (accents included), numbers, spaces, underscores and dashes only
                     new Regex(
-                        pattern: '/^[\p{L}\p{N} _-]+$/u',
+                        pattern: self::NAME_PATTERN,
                         message: 'The page name can only contain letters, numbers, spaces, underscores or dashes.',
                     ),
                 ],
             ])
             ->add('content', TextareaType::class, [
                 'label' => 'Markdown content',
+                'required' => false,
+                // The Markdown of the file is kept as is (no trim : spaces at the end of the lines are line breaks)
+                'trim' => false,
+                'empty_data' => '',
                 'attr' => [
+                    'class' => 'ali-docs-editor-input',
                     'rows' => 20,
-                    'style' => 'width: 100%;',
+                    'spellcheck' => 'true',
                 ],
                 'constraints' => [
                     new Length(
-                        max: 20000,
+                        max: self::CONTENT_MAX_LENGTH,
                         maxMessage: 'The content is too long (max {{ limit }} characters).',
                     ),
                 ],
